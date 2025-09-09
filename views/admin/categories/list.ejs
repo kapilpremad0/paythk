@@ -1,0 +1,224 @@
+<div class="app-content content ">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-header row">
+
+
+      <div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+
+
+          <form id="categoryForm" class="modal-content" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title" id="createCategoryModalLabel">Create Category</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+
+              <div class="mb-1">
+                <label for="name">Category Name</label>
+                <input type="text" class="form-control" id="name" name="name" />
+                <div id="name-submit_errors" class="validation-error"></div>
+              </div>
+              <div class="mb-1">
+                <label for="image">Image</label>
+                <input type="file" class="form-control" id="image" name="image" />
+                <div id="image-submit_errors" class="validation-error"></div>
+              </div>
+              <div class="mb-1">
+                <label for="status">Status</label>
+                <select class="form-control" id="status" name="status">
+                  <option value="">Select Status</option>
+                  <option value="1">Active</option>
+                  <option value="0">Inactive</option>
+                </select>
+                <div id="status-submit_errors" class="validation-error"></div>
+              </div>
+              <div class="mb-1">
+                <label for="description">Description</label>
+                <textarea class="form-control" id="description" name="description"></textarea>
+                <div id="description-submit_errors" class="validation-error"></div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Create</button>
+              </div>
+
+            </div>
+
+
+          </form>
+        </div>
+      </div>
+
+
+      <div class="content-header-right text-md-end col-md-3 col-12 d-md-block d-none">
+
+        <!-- Create Category Button -->
+
+
+        <!-- Modal -->
+
+        <script>
+          $(document).ready(function() {
+            $('#categoryForm').on('submit', function(e) {
+              e.preventDefault();
+              // Clear previous error messages
+              $('.validation-error').text('');
+
+              const formData = new FormData(this);
+
+              $.ajax({
+                url: '/admin/categories',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                  window.location.reload();
+                },
+                error: function(res) {
+                  // If there are validation errors
+                  if (res.status == 400 || res.status == 422) {
+                    if (res.responseJSON && res.responseJSON.errors) {
+                      var error = res.responseJSON.errors;
+                      $.each(error, function(key, value) {
+                        $("#" + key + "-submit_errors").text(value); // Show error message under input
+                      });
+                    }
+                  }
+
+                  if (res.status == 500) {
+                    showErrorToast(res.responseJSON.error);
+                  }
+                }
+              });
+            });
+          });
+        </script>
+
+
+
+      </div>
+    </div>
+    <div class="content-body">
+
+
+      <!-- Bordered table start -->
+      <div class="row" id="table-bordered">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <!-- Flex container to align Search and Status Filter on the same line -->
+
+              <!-- Status filter dropdown -->
+              <div class="">
+                <label for="statusFilter" class="form-label">Filter by Status</label>
+                <select id="statusFilter" class="form-select">
+                  <option value="">All</option>
+                  <option value="1">Active</option>
+                  <option value="0">Inactive</option>
+                </select>
+              </div>
+
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+                Create Category
+              </button>
+
+            </div>
+            <div class="card-body">
+              <div class="table-responsive card card-company-table">
+                <script>
+                  $(document).ready(function() {
+                    var table = $('#categoriesTable').DataTable({
+                      columnDefs: [{
+                        orderable: false
+                      }],
+
+                      processing: true,
+                      serverSide: true,
+                      ajax: {
+                        url: '/admin/categories/data',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: function(d) {
+                          // Get values from both filters
+                          var search = $('#searchFilter').val(); // Get search term
+                          var status = $('#statusFilter').val(); // Get selected status
+
+                          // Add search term and status filter to the data object
+                          if (search) {
+                            d.search = search; // Add the search term
+                          }
+                          if (status) {
+                            d.status = status; // Add the status filter if it's selected
+                          }
+
+                          return JSON.stringify(d); // Return the modified data object
+
+                          feather.replace();
+
+                        }
+                      },
+                      columns: [{
+                          data: null,
+                          render: function(data, type, row, meta) {
+                            return meta.settings._iDisplayStart + meta.row + 1;
+                          },
+                          searchable: false,
+                          orderable: false
+                        },
+                        {
+                          data: 'name'
+                        },
+                        {
+                          data: 'status'
+                        },
+                        {
+                          data: 'description'
+                        },
+                        {
+                          data: 'datetime'
+                        },
+                        {
+                          data: 'action'
+                        }
+                      ],
+                      drawCallback: function(settings) {
+                        feather.replace(); // Ensures icons are replaced every time table is drawn
+                      }
+                    });
+
+                    // Reload table when either filter or search is changed
+                    $('#statusFilter, #searchFilter').on('change keyup', function() {
+                      table.ajax.reload(); // Reload DataTable on change or keyup
+                    });
+                  });
+                </script>
+
+                <table class="table" id="categoriesTable">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      <th>Status</th>
+                      <th>Description</th>
+                      <th>Date Time</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
