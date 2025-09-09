@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    
+
       - name: Checkout repo
         uses: actions/checkout@v3
 
@@ -39,3 +39,5 @@ jobs:
             pm2 delete paythk || true
             pm2 start server.js --name "paythk"
             pm2 save
+
+
