@@ -1,14 +1,30 @@
 const { render } = require('ejs');
 const User = require('../../models/User');
 
-exports.getUserList = async (req, res) => {
+exports.getList = async (req, res) => {
   try {
-    res.render('admin/users/list',{ title: "Passenger" });
+    res.render('admin/users/list', { title: "Passenger" });
     // res.json(categories);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getDetail = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) return res.status(404).send("User not found");
+
+    // bookings empty for now (later you can fetch from Booking model)
+    const bookings = [];
+
+    res.render('admin/users/show', { title: "User Detail" , user,
+      bookings,});
+  } catch (error) {
+    res.status(500).json({ error: err.message });
+  }
+}
 
 exports.deleteRecord = async (req, res) => {
   try {
@@ -19,7 +35,7 @@ exports.deleteRecord = async (req, res) => {
   }
 };
 
-exports.getuserData = async (req, res) => {
+exports.getData = async (req, res) => {
   try {
 
     const draw = parseInt(req.body.draw) || 0;
@@ -62,41 +78,14 @@ exports.getuserData = async (req, res) => {
       name__: item.name,
       gender: item.gender,
       dob: item.dob,
-      name: `<div class="d-flex align-items-center">
-                            <div class="avatar rounded">
-                                <div class="avatar-content">
-                                    <img src="${item.profile_url}" width="50"
-                                        height="50" alt="Toolbar svg" />
-                                </div>
-                            </div>
-                            <div>
-                                <div class="fw-bolder">${item.name}</div>
-                                <div class="font-small-2 text-muted">${item.email}</div>
-                                <div class="font-small-2 text-muted">${item.mobile}</div>
-                                
-                            </div>
-                        </div>`,
+      name: item.name_div,
 
       // status: item.status === 1
       //   ? `<span class="badge rounded-pill badge-light-primary me-1">Active</span>`
       //   : `<span class="badge rounded-pill badge-light-danger me-1">Inactive</span>`,
       // description: item.description,
       datetime: new Date(item.createdAt).toLocaleString(), // Format datetime
-      action: `<div class="dropdown">
-                          <button type="button" class="btn btn-sm dropdown-toggle hide-arrow py-0" data-bs-toggle="dropdown">
-                            <i data-feather="more-vertical"></i>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="/admin/users/${item._id}">
-                              <i data-feather="eye" class="me-50"></i>
-                              <span>Show</span>
-                            </a>
-                            <a class="dropdown-item delete-user" href="#" data-id="${item._id}" data-name="${item.name}" >
-                              <i data-feather="trash" class="me-50"></i>
-                              <span>Delete</span>
-                            </a>
-                          </div>
-                </div>`
+      action: item.action_div
     }));
 
     res.json({

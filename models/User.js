@@ -105,4 +105,48 @@ UserSchema.virtual('document_urls').get(function () {
     return docs;
 });
 
+
+
+UserSchema.virtual("name_div").get(function () {
+    return `
+    <div class="d-flex align-items-center">
+      <div class="avatar rounded">
+        <div class="avatar-content">
+          <img src="${this.profile_url}" width="50" height="50" alt="Toolbar svg" />
+        </div>
+      </div>
+      <div>
+        <div class="fw-bolder"><a href="/admin/users/${this._id}">${this.name}</a></div>
+        <div class="font-small-2 text-muted">${this.email}</div>
+        <div class="font-small-2 text-muted">${this.mobile}</div>
+      </div>
+    </div>
+  `;
+});
+
+// ✅ Virtual for action dropdown
+UserSchema.virtual("action_div").get(function () {
+    return `
+    <div class="dropdown">
+      <button type="button" class="btn btn-sm dropdown-toggle hide-arrow py-0" data-bs-toggle="dropdown">
+        <i data-feather="more-vertical"></i>
+      </button>
+      <div class="dropdown-menu dropdown-menu-end">
+        <a class="dropdown-item" href="/admin/users/${this._id}">
+          <i data-feather="eye" class="me-50"></i>
+          <span>Show</span>
+        </a>
+        <a class="dropdown-item" href="/admin/users/edit/${this._id}">
+          <i data-feather="edit-2" class="me-50"></i>
+          <span>Edit</span>
+        </a>
+        <a class="dropdown-item delete-user" href="#" data-id="${this._id}" data-name="${this.name}">
+          <i data-feather="trash" class="me-50"></i>
+          <span>Delete</span>
+        </a>
+      </div>
+    </div>
+  `;
+});
+
 module.exports = mongoose.model('User', UserSchema);
