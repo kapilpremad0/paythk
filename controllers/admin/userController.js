@@ -21,6 +21,16 @@ exports.create = async (req, res) => {
   }
 }
 
+exports.edit = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.render('admin/users/create', { title: "Edit User", user: user });
+    // res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 exports.getDetail = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -55,7 +65,7 @@ exports.getData = async (req, res) => {
     const start = parseInt(req.body.start) || 0;
     const length = parseInt(req.body.length) || 10;
     const search = req.body.search?.value || "";
-    const status = req.body.status; // Get the status filter
+    const gender = req.body.gender; // Get the status filter
 
     const query = { user_type: "customer", otp_verify: true };
 
@@ -69,9 +79,8 @@ exports.getData = async (req, res) => {
       ];
     }
 
-
-    if (status) {
-      query.status = status; // Add the status filter to the query
+    if (gender) {
+      query.gender = gender; // Add the status filter to the query
     }
 
     const totalRecords = await User.countDocuments();
@@ -90,7 +99,7 @@ exports.getData = async (req, res) => {
     const data = data_fetch.map(item => ({
       name__: item.name,
       gender: item.gender,
-      dob: item.dob,
+      dob: item.dob_formatted,
       name: item.name_div,
 
       // status: item.status === 1
@@ -199,5 +208,98 @@ exports.storeData = async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Failed to save user. Please try again later." });
+  }
+};
+
+exports.updateData = async (req, res) => {
+  try {
+    console.log("REQ BODY:", req.body);
+    console.log("REQ FILE:", req.file);
+
+    const userId = req.params.id; // ID from URL
+    const {
+      name,
+      email,
+      mobile,
+      password,
+      gender,
+      dob,
+      ssn,
+      emergencyContact,
+      homeAddress,
+
+    } = req.body || {};
+
+    const profile = req.files?.profile?.[0]; // uploaded profile image (if exists)
+
+    const errors = {};
+
+    // Required fields
+    if (!name) errors.name = "Name is required";
+    if (!mobile) errors.mobile = "Mobile number is required";
+
+    // Format validations
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = "Invalid email format";
+    }
+
+    if (mobile && !/^[0-9]{10}$/.test(mobile)) {
+      errors.mobile = "Mobile must be a 10-digit number";
+    }
+
+    if (dob && isNaN(Date.parse(dob))) {
+      errors.dob = "Invalid date of birth";
+    }
+
+    // Return validation errors
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json({ errors });
+    }
+
+    // === Uniqueness check (exclude current user ID) ===
+    if (email) {
+      const emailExists = await User.findOne({ email, _id: { $ne: userId } });
+      if (emailExists) {
+        return res.status(400).json({ errors: { email: "Email already exists" } });
+      }
+    }
+
+    if (mobile) {
+      const mobileExists = await User.findOne({ mobile, _id: { $ne: userId } });
+      if (mobileExists) {
+        return res.status(400).json({ errors: { mobile: "Mobile number already exists" } });
+      }
+    }
+
+    // === Update user ===
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.name = name;
+    user.email = email;
+    user.mobile = mobile;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+    user.gender = gender || null;
+    user.dob = dob ? new Date(dob) : null;
+    user.profile = profile ? profile.filename : user.profile;
+    user.ssn = ssn || null;
+    user.emergencyContact = emergencyContact || null;
+    user.homeAddress = homeAddress || null;
+
+    await user.save();
+
+
+    return res.status(200).json({
+      message: "User updated successfully",
+      data: user
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to update user. Please try again later." });
   }
 };

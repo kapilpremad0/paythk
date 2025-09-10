@@ -8,7 +8,10 @@
       <div class="col-xl-12 col-lg-12">
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title"><%= user.name %> Details</h4>
+            <h4 class="card-title"><%= user.name %> Details 
+              <a href="/admin/users/edit/<%= user._id %>">
+                <i data-feather="edit" class="me-50"></i>
+              </a></h4>
           </div>
           <div class="card-body">
 
