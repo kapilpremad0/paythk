@@ -6,6 +6,8 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const mongoose = require("mongoose");
 const expressLayouts = require('express-ejs-layouts');
+const { initSocket } = require('./config/socket');
+const http = require("http");
 
 
 
@@ -17,8 +19,6 @@ connectDB();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
 
 app.use(cors());
 const path = require('path');
@@ -73,7 +73,11 @@ app.use('/admin', require('./routes/admin/index.js'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api', require('./routes/api.js'));
 app.use('/api/profile', verifyToken, require('./routes/profile'));
+app.use('/api/chat', require('./routes/chat'));
 
+
+const server = http.createServer(app);
+initSocket(server);
 
 app.use((req, res, next) => {
   res.locals.success = null;
