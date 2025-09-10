@@ -4,102 +4,9 @@
   <div class="content-wrapper container-xxl p-0">
     <div class="content-header row">
 
-
-      <div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-
-
-          <form id="categoryForm" class="modal-content" enctype="multipart/form-data">
-            <div class="modal-header">
-              <h5 class="modal-title" id="createCategoryModalLabel">Create Category</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body">
-
-
-              <div class="mb-1">
-                <label for="name">Category Name</label>
-                <input type="text" class="form-control" id="name" name="name" />
-                <div id="name-submit_errors" class="validation-error"></div>
-              </div>
-              <div class="mb-1">
-                <label for="image">Image</label>
-                <input type="file" class="form-control" id="image" name="image" />
-                <div id="image-submit_errors" class="validation-error"></div>
-              </div>
-              <div class="mb-1">
-                <label for="status">Status</label>
-                <select class="form-control" id="status" name="status">
-                  <option value="">Select Status</option>
-                  <option value="1">Active</option>
-                  <option value="0">Inactive</option>
-                </select>
-                <div id="status-submit_errors" class="validation-error"></div>
-              </div>
-              <div class="mb-1">
-                <label for="description">Description</label>
-                <textarea class="form-control" id="description" name="description"></textarea>
-                <div id="description-submit_errors" class="validation-error"></div>
-              </div>
-
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-success">Create</button>
-              </div>
-
-            </div>
-
-
-          </form>
-        </div>
-      </div>
-
-
       <div class="content-header-right text-md-end col-md-3 col-12 d-md-block d-none">
 
-        <!-- Create Category Button -->
-
-
-        <!-- Modal -->
-
-        <script>
-          $(document).ready(function() {
-            $('#categoryForm').on('submit', function(e) {
-              e.preventDefault();
-              // Clear previous error messages
-              $('.validation-error').text('');
-
-              const formData = new FormData(this);
-
-              $.ajax({
-                url: '/admin/categories',
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                  window.location.reload();
-                },
-                error: function(res) {
-                  // If there are validation errors
-                  if (res.status == 400 || res.status == 422) {
-                    if (res.responseJSON && res.responseJSON.errors) {
-                      var error = res.responseJSON.errors;
-                      $.each(error, function(key, value) {
-                        $("#" + key + "-submit_errors").text(value); // Show error message under input
-                      });
-                    }
-                  }
-
-                  if (res.status == 500) {
-                    showErrorToast(res.responseJSON.error);
-                  }
-                }
-              });
-            });
-          });
-        </script>
-
+       
 
 
       </div>
@@ -115,7 +22,7 @@
               <!-- Flex container to align Search and Status Filter on the same line -->
 
               <!-- Status filter dropdown -->
-              <!-- <div class="">
+              <div class="">
                 <label for="statusFilter" class="form-label">Filter by Status</label>
                 <select id="statusFilter" class="form-select">
                   <option value="">All</option>
@@ -124,9 +31,10 @@
                 </select>
               </div>
 
-              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+              <a href="<%= '/admin/users/create' %>" class="btn btn-primary">
                 Create Category
-              </button> -->
+              </a>
+              
 
             </div>
             <div class="card-body">

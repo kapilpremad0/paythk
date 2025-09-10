@@ -8,20 +8,19 @@ const mongoose = require("mongoose");
 const expressLayouts = require('express-ejs-layouts');
 const { initSocket } = require('./config/socket'); // socket setup
 const http = require("http");
+const multer = require("multer"); // 👈 For form-data (file uploads)
 
-const verifyToken = require('./middlewares/auth'); // 👈 Import middleware
+const verifyToken = require('./middlewares/auth');
 
 dotenv.config();
 connectDB();
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 
-const path = require('path');
+app.use(cors());
 
 // Sessions
 app.use(
@@ -41,16 +40,35 @@ app.use(
   })
 );
 
+// Multer storage setup (form-data)
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // save files inside /uploads
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  }
+});
+const upload = multer({ storage });
+
+// 👇 Attach to req for usage in routes
+app.use((req, res, next) => {
+  req.upload = upload;
+  next();
+});
+
 // App locals
 app.locals.appName = process.env.APP_NAME;
 
 // Views
+const path = require('path');
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// enable layouts
+// Enable layouts
 app.use(expressLayouts);
-app.set('layout', 'admin/layouts/app'); // default layout (without .ejs extension)
+app.set('layout', 'admin/layouts/app');
 
 // Static folders
 app.use(express.static(path.join(__dirname, 'public')));
@@ -85,9 +103,11 @@ app.get("/", (req, res) => {
 // Create server
 const server = http.createServer(app);
 
-// Initialize socket.io with this server
+// Initialize socket.io
 initSocket(server);
 
-// Start server (Express + Socket.io together)
+// Start server
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`🚀 Server running with Socket.io on port ${PORT}`));
+server.listen(PORT, () =>
+  console.log(`🚀 Server running with Socket.io + form-data support on port ${PORT}`)
+);

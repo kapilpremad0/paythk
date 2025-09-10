@@ -1,0 +1,170 @@
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-header row"></div>
+    <div class="content-body">
+
+      <div class="col-xl-12 col-lg-12">
+        <form id="submitForm" method="post" enctype="multipart/form-data">
+          <!-- hidden field to detect edit mode -->
+          <input type="hidden" id="user_id" name="user_id" value="<%= user ? user._id : '' %>">
+
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+
+                <!-- Name -->
+                <div class="mb-1 col-md-6">
+                  <label for="name">Name</label>
+                  <input type="text" class="form-control" id="name" name="name" value="<%= user ? user.name : '' %>" placeholder="Enter full name" />
+                  <div id="name-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-1 col-md-6">
+                  <label for="email">Email</label>
+                  <input type="email" class="form-control" id="email" name="email" value="<%= user ? user.email : '' %>" placeholder="Enter email address" />
+                  <div id="email-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Mobile -->
+                <div class="mb-1 col-md-6">
+                  <label for="mobile">Mobile</label>
+                  <input type="text" class="form-control" id="mobile" name="mobile" value="<%= user ? user.mobile : '' %>" placeholder="Enter mobile number" />
+                  <div id="mobile-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-1 col-md-6">
+                  <label for="password">Password</label>
+                  <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" />
+                  <div id="password-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- User Type -->
+                <!-- <div class="mb-1 col-md-6">
+                  <label for="user_type">User Type</label>
+                  <select class="form-control" id="user_type" name="user_type">
+                    <option value="">Select user type</option>
+                    <option value="customer" <%= user && user.user_type === 'customer' ? 'selected' : '' %>>Customer</option>
+                    <option value="driver" <%= user && user.user_type === 'driver' ? 'selected' : '' %>>Driver</option>
+                    <option value="admin" <%= user && user.user_type === 'admin' ? 'selected' : '' %>>Admin</option>
+                  </select>
+                  <div id="user_type-submit_errors" class="validation-error"></div>
+                </div> -->
+
+                <!-- Gender -->
+                <div class="mb-1 col-md-6">
+                  <label for="gender">Gender</label>
+                  <select class="form-control" id="gender" name="gender">
+                    <option value="">Select gender</option>
+                    <option value="male" <%= user && user.gender === 'male' ? 'selected' : '' %>>Male</option>
+                    <option value="female" <%= user && user.gender === 'female' ? 'selected' : '' %>>Female</option>
+                    <option value="other" <%= user && user.gender === 'other' ? 'selected' : '' %>>Other</option>
+                  </select>
+                  <div id="gender-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- DOB -->
+                <div class="mb-1 col-md-6">
+                  <label for="dob">Date of Birth</label>
+                  <input type="date" class="form-control" id="dob" name="dob" value="<%= user ? user.dob : '' %>" />
+                  <div id="dob-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Profile Image -->
+                <div class="mb-1 col-md-6">
+                  <label for="profile">Profile Image</label>
+                  <input type="file" class="form-control" id="profile" name="profile" />
+                  <% if (user && user.profile_url) { %>
+                  <img src="<%= user.profile_url %>" alt="Profile" width="50" class="mt-1 rounded" />
+                  <% } %>
+                  <div id="profile-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- SSN -->
+                <div class="mb-1 col-md-6">
+                  <label for="ssn">SSN</label>
+                  <input type="text" class="form-control" id="ssn" name="ssn" value="<%= user ? user.ssn : '' %>" placeholder="Enter SSN" />
+                  <div id="ssn-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Emergency Contact -->
+                <div class="mb-1 col-md-6">
+                  <label for="emergencyContact">Emergency Contact</label>
+                  <input type="text" class="form-control" id="emergencyContact" name="emergencyContact" value="<%= user ? user.emergencyContact : '' %>" placeholder="Enter emergency contact number" />
+                  <div id="emergencyContact-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Home Address -->
+                <div class="mb-1 col-md-6">
+                  <label for="homeAddress">Home Address</label>
+                  <textarea class="form-control" id="homeAddress" name="homeAddress" placeholder="Enter home address"><%= user ? user.homeAddress : '' %></textarea>
+                  <div id="homeAddress-submit_errors" class="validation-error"></div>
+                </div>
+              </div>
+
+              <!-- Submit -->
+              <button type="submit" class="btn btn-primary mt-2">
+                <%= user ? 'Update User' : 'Save User' %>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script>
+  $(document).ready(function() {
+    $('#submitForm').on('submit', function(e) {
+      e.preventDefault();
+      $('.validation-error').text('');
+
+      const formData = new FormData(this);
+      const userId = $('#user_id').val();
+
+      let url = '/admin/users';
+      let method = 'POST';
+
+      if (userId) { // editing
+        url = '/admin/users/' + userId;
+        method = 'PUT';
+      }
+
+      
+
+      $.ajax({
+        url: url,
+        method: method,
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          window.location.href = '/admin/users'; // redirect after save
+        },
+        error: function(res) {
+          if (res.status == 400 || res.status == 422) {
+            if (res.responseJSON && res.responseJSON.errors) {
+              var error = res.responseJSON.errors;
+              $.each(error, function(key, value) {
+                $("#" + key + "-submit_errors").text(value);
+              });
+            }
+          }
+          if (res.status == 500) {
+             showErrorToast(res.responseJSON.error);
+          }
+          if (res.status == 404) {
+             showErrorToast('Something went worng');
+           
+          }
+        }
+      });
+    });
+  });
+</script>

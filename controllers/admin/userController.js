@@ -1,5 +1,7 @@
 const { render } = require('ejs');
 const User = require('../../models/User');
+const bcrypt = require('bcryptjs');
+
 
 exports.getList = async (req, res) => {
   try {
@@ -10,6 +12,15 @@ exports.getList = async (req, res) => {
   }
 };
 
+exports.create = async (req, res) => {
+  try {
+    res.render('admin/users/create', { title: "Create User", user: null });
+    // res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 exports.getDetail = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -19,8 +30,10 @@ exports.getDetail = async (req, res) => {
     // bookings empty for now (later you can fetch from Booking model)
     const bookings = [];
 
-    res.render('admin/users/show', { title: "User Detail" , user,
-      bookings,});
+    res.render('admin/users/show', {
+      title: "User Detail", user,
+      bookings,
+    });
   } catch (error) {
     res.status(500).json({ error: err.message });
   }
@@ -96,5 +109,95 @@ exports.getData = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+exports.storeData = async (req, res) => {
+  try {
+    console.log("REQ BODY:", req.body);
+    console.log("REQ FILE:", req.file);
+
+    const {
+      name,
+      email,
+      mobile,
+      password,
+      gender,
+      dob,
+      ssn,
+      emergencyContact,
+      homeAddress,
+      otp_verify,
+      terms_conditions
+    } = req.body || {};
+
+    const profile = req.files?.profile?.[0]; // uploaded profile image (if exists)
+
+    const errors = {};
+
+    // Required fields
+    if (!name) errors.name = "Name is required";
+    if (!mobile) errors.mobile = "Mobile number is required";
+    if (!password) errors.password = "Password is required";
+
+    // Format validations
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = "Invalid email format";
+    }
+
+    if (mobile && !/^[0-9]{10}$/.test(mobile)) {
+      errors.mobile = "Mobile must be a 10-digit number";
+    }
+
+    if (dob && isNaN(Date.parse(dob))) {
+      errors.dob = "Invalid date of birth";
+    }
+
+    if (email) {
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+        errors.email = "Email already exists";
+
+      }
+    }
+
+    const existingMobile = await User.findOne({ mobile });
+    if (existingMobile) {
+      errors.mobile = "Mobile number already exists";
+    }
+
+    // Return validation errors
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json({ errors });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const user = new User({
+      name,
+      email,
+      mobile,
+      password: hashedPassword, // ⚠️ Ideally hash this before saving!
+      user_type: "customer",
+      gender: gender || null,
+      dob: dob ? new Date(dob) : null,
+      profile: profile ? profile.filename : "",
+      ssn: ssn || null,
+      emergencyContact: emergencyContact || null,
+      homeAddress: homeAddress || null,
+      otp_verify: true,
+      terms_conditions: true
+    });
+
+    await user.save();
+
+    return res.status(201).json({
+      message: "User created successfully",
+      data: user
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to save user. Please try again later." });
   }
 };
