@@ -6,7 +6,7 @@
 
       <div class="content-header-right text-md-end col-md-3 col-12 d-md-block d-none">
 
-       
+
 
 
       </div>
@@ -23,18 +23,19 @@
 
               <!-- Status filter dropdown -->
               <div class="">
-                <label for="statusFilter" class="form-label">Filter by Status</label>
-                <select id="statusFilter" class="form-select">
+                <label for="genderFilter" class="form-label">Filter by Gender</label>
+                <select id="genderFilter" class="form-select">
                   <option value="">All</option>
-                  <option value="1">Active</option>
-                  <option value="0">Inactive</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
 
               <a href="<%= '/admin/users/create' %>" class="btn btn-primary">
-                Create Category
+                Create
               </a>
-              
+
 
             </div>
             <div class="card-body">
@@ -55,14 +56,14 @@
                         data: function(d) {
                           // Get values from both filters
                           var search = $('#searchFilter').val(); // Get search term
-                          var status = $('#statusFilter').val(); // Get selected status
+                          var gender = $('#genderFilter').val(); // Get selected status
 
                           // Add search term and status filter to the data object
                           if (search) {
                             d.search = search; // Add the search term
                           }
-                          if (status) {
-                            d.status = status; // Add the status filter if it's selected
+                          if (gender) {
+                            d.gender = gender; // Add the status filter if it's selected
                           }
 
                           return JSON.stringify(d); // Return the modified data object
@@ -84,10 +85,22 @@
                         },
 
                         {
-                          data: 'gender'
+                          data: 'gender',
+                          render: function(data, type, row) {
+                            if (!data) return ''; // handle empty gender
+                            return data.toUpperCase(); // convert to uppercase
+                          }
                         },
                         {
-                          data: 'dob'
+                          data: 'dob',
+                          render: function(data, type, row) {
+                            if (!data) return '';
+                            const d = new Date(data);
+                            const year = d.getFullYear();
+                            const month = String(d.getMonth() + 1).padStart(2, '0');
+                            const day = String(d.getDate()).padStart(2, '0');
+                            return `${day}-${month}-${year}`; // Format DOB as YYYY-MM-DD
+                          }
                         },
                         {
                           data: 'action'
@@ -99,7 +112,7 @@
                     });
 
                     // Reload table when either filter or search is changed
-                    $('#statusFilter, #searchFilter').on('change keyup', function() {
+                    $('#genderFilter, #searchFilter').on('change keyup', function() {
                       table.ajax.reload(); // Reload DataTable on change or keyup
                     });
                   });

@@ -1,0 +1,259 @@
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-header row"></div>
+    <div class="content-body">
+
+      <div class="col-xl-12 col-lg-12">
+        <form id="submitForm" method="post" enctype="multipart/form-data">
+          <!-- hidden field to detect edit mode -->
+          <input type="hidden" id="hostel_id" name="hostel_id" value="<%= hostel ? hostel._id : '' %>">
+
+          <div class="card">
+            <div class="card-header">
+              <h3> <%= hostel ? 'Edit Hostel' : 'Create Hostel' %></h3>
+            </div>
+            <div class="card-body">
+              <div class="row">
+
+                <!-- Basic Details -->
+                <div class="mb-1 col-md-6">
+                  <label for="name">Hostel Name</label>
+                  <input type="text" class="form-control" id="name" name="name" value="<%= hostel ? hostel.name : '' %>" placeholder="Enter hostel name" />
+                  <div id="name-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="type">Hostel Type</label>
+                  <select class="form-control" id="type" name="type">
+                    <option value="">Select type</option>
+                    <option value="Boys" <%= hostel && hostel.type === 'Boys' ? 'selected' : '' %>>Boys</option>
+                    <option value="Girls" <%= hostel && hostel.type === 'Girls' ? 'selected' : '' %>>Girls</option>
+                    <option value="Mixed" <%= hostel && hostel.type === 'Mixed' ? 'selected' : '' %>>Mixed</option>
+                  </select>
+                  <div id="type-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="address">Address</label>
+                  <textarea class="form-control" id="address" name="address" placeholder="Enter hostel address"><%= hostel ? hostel.address : '' %></textarea>
+                  <div id="address-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="city">City</label>
+                  <input type="text" class="form-control" id="city" name="city" value="<%= hostel ? hostel.city : '' %>" placeholder="Enter city" />
+                  <div id="city-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="state">State</label>
+                  <input type="text" class="form-control" id="state" name="state" value="<%= hostel ? hostel.state : '' %>" placeholder="Enter state" />
+                  <div id="state-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="country">Country</label>
+                  <input type="text" class="form-control" id="country" name="country" value="<%= hostel ? hostel.country : 'India' %>" placeholder="Enter country" />
+                  <div id="country-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="pinCode">Pin Code</label>
+                  <input type="text" class="form-control" id="pinCode" name="pinCode" value="<%= hostel ? hostel.pinCode : '' %>" placeholder="Enter pin code" />
+                  <div id="pinCode-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Facilities -->
+                <div class="mb-1 col-md-6">
+                  <label for="totalRooms">Total Rooms</label>
+                  <input type="number" class="form-control" id="totalRooms" name="totalRooms" value="<%= hostel ? hostel.totalRooms : '' %>" placeholder="Enter total rooms" />
+                  <div id="totalRooms-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="occupancyPerRoom">Occupancy per Room</label>
+                  <input type="number" class="form-control" id="occupancyPerRoom" name="occupancyPerRoom" value="<%= hostel ? hostel.occupancyPerRoom : '' %>" placeholder="Enter occupancy per room" />
+                  <div id="occupancyPerRoom-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-3">
+                  <div class="form-check mt-4">
+                    <input type="checkbox" class="form-check-input" id="foodFacility" name="foodFacility" value="true" <%= hostel && hostel.foodFacility ? 'checked' : '' %>>
+                    <label for="foodFacility" class="form-check-label">Food Facility</label>
+                  </div>
+                </div>
+
+                <div class="mb-1 col-md-3">
+                  <div class="form-check mt-4">
+                    <input type="checkbox" class="form-check-input" id="laundryService" name="laundryService" value="true" <%= hostel && hostel.laundryService ? 'checked' : '' %>>
+                    <label for="laundryService" class="form-check-label">Laundry Service</label>
+                  </div>
+                </div>
+
+                <div class="mb-1 col-md-3">
+                  <div class="form-check mt-4">
+                    <input type="checkbox" class="form-check-input" id="wifi" name="wifi" value="true" <%= hostel && hostel.wifi ? 'checked' : '' %>>
+                    <label for="wifi" class="form-check-label">WiFi</label>
+                  </div>
+                </div>
+
+                <div class="mb-1 col-md-3">
+                  <div class="form-check mt-4">
+                    <input type="checkbox" class="form-check-input" id="security" name="security" value="true" <%= hostel && hostel.security ? 'checked' : '' %>>
+                    <label for="security" class="form-check-label">Security</label>
+                  </div>
+                </div>
+
+                <div class="mb-1 col-md-3">
+                  <div class="form-check mt-4">
+                    <input type="checkbox" class="form-check-input" id="parking" name="parking" value="true" <%= hostel && hostel.parking ? 'checked' : '' %>>
+                    <label for="parking" class="form-check-label">Parking</label>
+                  </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="mb-1 col-md-6">
+                  <label for="contactPerson">Contact Person</label>
+                  <input type="text" class="form-control" id="contactPerson" name="contactPerson" value="<%= hostel ? hostel.contactPerson : '' %>" placeholder="Enter contact person" />
+                  <div id="contactPerson-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="contactNumber">Contact Number</label>
+                  <input type="text" class="form-control" id="contactNumber" name="contactNumber" value="<%= hostel ? hostel.contactNumber : '' %>" placeholder="Enter contact number" />
+                  <div id="contactNumber-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="email">Email</label>
+                  <input type="email" class="form-control" id="email" name="email" value="<%= hostel ? hostel.email : '' %>" placeholder="Enter email address" />
+                  <div id="email-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="website">Website</label>
+                  <input type="text" class="form-control" id="website" name="website" value="<%= hostel ? hostel.website : '' %>" placeholder="Enter website URL" />
+                  <div id="website-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Financial Details -->
+                <div class="mb-1 col-md-6">
+                  <label for="monthlyFee">Monthly Fee</label>
+                  <input type="number" class="form-control" id="monthlyFee" name="monthlyFee" value="<%= hostel ? hostel.monthlyFee : '' %>" placeholder="Enter monthly fee" />
+                  <div id="monthlyFee-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="depositAmount">Deposit Amount</label>
+                  <input type="number" class="form-control" id="depositAmount" name="depositAmount" value="<%= hostel ? hostel.depositAmount : '' %>" placeholder="Enter deposit amount" />
+                  <div id="depositAmount-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="paymentMode">Payment Mode</label>
+                  <select class="form-control" id="paymentMode" name="paymentMode">
+                    <option value="">Select payment mode</option>
+                    <option value="Cash" <%= hostel && hostel.paymentMode === 'Cash' ? 'selected' : '' %>>Cash</option>
+                    <option value="Bank" <%= hostel && hostel.paymentMode === 'Bank' ? 'selected' : '' %>>Bank</option>
+                    <option value="Online" <%= hostel && hostel.paymentMode === 'Online' ? 'selected' : '' %>>Online</option>
+                  </select>
+                  <div id="paymentMode-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Files -->
+                <div class="mb-1 col-md-6">
+                  <label for="images">Images</label>
+                  <input type="file" class="form-control" id="images" name="images" multiple />
+                  <% if (hostel && hostel.images && hostel.images.length > 0) { %>
+                    <% hostel.images.forEach(img => { %>
+                      <img src="<%= img %>" alt="Image" width="50" class="mt-1 rounded" />
+                    <% }) %>
+                  <% } %>
+                  <div id="images-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="licenseDocument">License Document</label>
+                  <input type="file" class="form-control" id="licenseDocument" name="licenseDocument" />
+                  <% if (hostel && hostel.licenseDocument) { %>
+                    <a href="<%= hostel.licenseDocument %>" target="_blank">View Document</a>
+                  <% } %>
+                  <div id="licenseDocument-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Rules & Notes -->
+                <div class="mb-1 col-md-12">
+                  <label for="rules">Hostel Rules</label>
+                  <textarea class="form-control" id="rules" name="rules" placeholder="Enter hostel rules"><%= hostel ? hostel.rules : '' %></textarea>
+                  <div id="rules-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-12">
+                  <label for="additionalNotes">Additional Notes</label>
+                  <textarea class="form-control" id="additionalNotes" name="additionalNotes" placeholder="Enter additional notes"><%= hostel ? hostel.additionalNotes : '' %></textarea>
+                  <div id="additionalNotes-submit_errors" class="validation-error"></div>
+                </div>
+
+              </div>
+
+              <!-- Submit -->
+              <button type="submit" class="btn btn-primary mt-2">
+                <%= hostel ? 'Update Hostel' : 'Save Hostel' %>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#submitForm').on('submit', function(e) {
+      e.preventDefault();
+      $('.validation-error').text('');
+
+      const formData = new FormData(this);
+      const hostelId = $('#hostel_id').val();
+
+      let url = '/admin/hostels';
+      let method = 'POST';
+
+      if (hostelId) { // editing
+        url = '/admin/hostels/' + hostelId;
+        method = 'PUT';
+      }
+
+      $.ajax({
+        url: url,
+        method: method,
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          window.location.href = '/admin/hostels'; // redirect after save
+        },
+        error: function(res) {
+          if (res.status == 400 || res.status == 422) {
+            if (res.responseJSON && res.responseJSON.errors) {
+              var error = res.responseJSON.errors;
+              $.each(error, function(key, value) {
+                $("#" + key + "-submit_errors").text(value);
+              });
+            }
+          }
+          if (res.status == 500) {
+             showErrorToast(res.responseJSON.error);
+          }
+          if (res.status == 404) {
+             showErrorToast('Something went wrong');
+          }
+        }
+      });
+    });
+  });
+</script>
