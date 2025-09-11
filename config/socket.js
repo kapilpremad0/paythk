@@ -13,7 +13,7 @@ function initSocket(server) {
         console.log("🟢 New client connected:", socket.id);
 
         // Register user as online
-        socket.on("register", (userId) => {
+        socket.on("register", ({userId}) => {
             onlineUsers[userId] = socket.id;
             console.log(`✅ User ${userId} registered with socket ${socket.id}`);
         });
@@ -36,6 +36,7 @@ function initSocket(server) {
 
                 // Emit to receiver if online
                 const receiverSocketId = onlineUsers[receiver];
+                console.log(receiverSocketId);
                 if (receiverSocketId) {
                     io.to(receiverSocketId).emit("receive_message", message);
                 }

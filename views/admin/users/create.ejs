@@ -139,15 +139,17 @@
         method = 'PUT';
       }
 
-      
 
+      $('#form-loader').show();
       $.ajax({
         url: url,
         method: method,
         data: formData,
         processData: false,
         contentType: false,
+
         success: function(response) {
+          $('#form-loader').hide();
           window.location.href = '/admin/users'; // redirect after save
         },
         error: function(res) {
@@ -160,12 +162,13 @@
             }
           }
           if (res.status == 500) {
-             showErrorToast(res.responseJSON.error);
+            showErrorToast(res.responseJSON.error);
           }
           if (res.status == 404) {
-             showErrorToast('Something went worng');
-           
+            showErrorToast('Something went worng');
+
           }
+          $('#form-loader').hide();
         }
       });
     });
