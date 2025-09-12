@@ -34,6 +34,7 @@
                       <th>Name</th>
                       <th>Type</th>
                       <th>City</th>
+                      <th>State</th>
                       <th>Monthly Fee</th>
                       <th>Action</th>
                     </tr>
@@ -96,6 +97,7 @@
         { data: 'name' },
         { data: 'type', render: data => data ? data.toUpperCase() : '' },
         { data: 'city', render: data => data ? data.toUpperCase() : '' },
+        { data: 'state', render: data => data ? data.toUpperCase() : '' },
         { data: 'monthlyFee', render: data => data ? `$${data}` : '' },
         { data: 'action' }
       ],

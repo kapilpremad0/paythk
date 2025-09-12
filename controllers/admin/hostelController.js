@@ -22,9 +22,11 @@ exports.create = async (req, res) => {
 
 exports.edit = async (req, res) => {
   try {
+    const locations = await Location.find();
     const hostel = await Hostel.findById(req.params.id);
     if (!hostel) return res.status(404).send("Hostel not found");
-    res.render('admin/hostels/create', { title: "Edit Hostel", hostel });
+    console.log("Hostel Data:", hostel);
+    res.render('admin/hostels/create', { title: "Edit Hostel", hostel ,locations });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -89,18 +91,19 @@ exports.getData = async (req, res) => {
       .sort({ createdAt: -1 })
       .skip(start)
       .limit(length)
+      .populate("location", "city state")
       .exec();
 
     const data = data_fetch.map((hostel, index) => ({
       serial: start + index + 1,
       name: hostel.name,
       type: hostel.type,
-      city: hostel.city,
-      state: hostel.state,
+      city: hostel.location.city,
+      state: hostel.location.state,
       contactPerson: hostel.contactPerson,
       contactNumber: hostel.contactNumber,
       monthlyFee: hostel.monthlyFee,
-      action: `<a href="/admin/hostels/edit/${hostel._id}">Edit</a> | <a href="#" onclick="deleteHostel('${hostel._id}')">Delete</a>`
+      action: hostel.action_div,
     }));
 
     res.json({
@@ -139,7 +142,8 @@ exports.storeData = async (req, res) => {
       depositAmount,
       paymentMode,
       rules,
-      additionalNotes
+      additionalNotes,
+      location
     } = req.body;
 
     const images = req.files?.images?.map(f => f.filename) || [];
@@ -148,7 +152,8 @@ exports.storeData = async (req, res) => {
     const errors = {};
 
     if (!name) errors.name = "Hostel name is required";
-    if (!city) errors.city = "City is required";
+    // if (!city) errors.city = "City is required";
+    if (!location) errors.location = "Location is required";
     if (!totalRooms) errors.totalRooms = "Total rooms is required";
 
     if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
@@ -165,7 +170,8 @@ exports.storeData = async (req, res) => {
       monthlyFee, depositAmount, paymentMode,
       rules, additionalNotes,
       images,
-      licenseDocument
+      licenseDocument,
+      location
     });
 
     await hostel.save();

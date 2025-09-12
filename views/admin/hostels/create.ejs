@@ -41,34 +41,39 @@
                   <div id="address-submit_errors" class="validation-error"></div>
                 </div>
 
-                <div class="mb-1 col-md-6">
+                <!-- <div class="mb-1 col-md-6">
                   <label for="city">City</label>
                   <input type="text" class="form-control" id="city" name="city" value="<%= hostel ? hostel.city : '' %>" placeholder="Enter city" />
                   <div id="city-submit_errors" class="validation-error"></div>
-                </div>
+                </div> -->
 
-                <div class="mb-1 col-md-6">
+                <!-- <div class="mb-1 col-md-6">
                   <label for="state">State</label>
                   <input type="text" class="form-control" id="state" name="state" value="<%= hostel ? hostel.state : '' %>" placeholder="Enter state" />
                   <div id="state-submit_errors" class="validation-error"></div>
-                </div>
+                </div> -->
 
                 <div class="mb-1 col-md-6">
                   <label for="location">Select Location</label>
                   <select name="location" class="form-select select2">
                     <option value="">-- Select Location --</option>
                     <% locations.forEach(loc => { %>
-                    <option value="<%= loc._id %>"><%= loc.city %>, <%= loc.state %></option>
+                    <option value="<%= loc._id %>"
+                       <%= hostel && hostel.location && hostel.location.toString() === loc._id.toString() ? 'selected' : '' %>
+                      >
+
+                      <%= loc.city %>, 
+                      <%= loc.state %></option>
                     <% }) %>
                   </select>
                   <div id="location-submit_errors" class="validation-error"></div>
                 </div>
 
-                <div class="mb-1 col-md-6">
+                <!-- <div class="mb-1 col-md-6">
                   <label for="country">Country</label>
                   <input type="text" class="form-control" id="country" name="country" value="<%= hostel ? hostel.country : 'India' %>" placeholder="Enter country" />
                   <div id="country-submit_errors" class="validation-error"></div>
-                </div>
+                </div> -->
 
                 <div class="mb-1 col-md-6">
                   <label for="pinCode">Pin Code</label>
@@ -178,7 +183,7 @@
                   <label for="images">Images</label>
                   <input type="file" class="form-control" id="images" name="images" multiple />
                   <% if (hostel && hostel.images && hostel.images.length > 0) { %>
-                  <% hostel.images.forEach(img => { %>
+                  <% hostel.imageUrls.forEach(img => { %>
                   <img src="<%= img %>" alt="Image" width="50" class="mt-1 rounded" />
                   <% }) %>
                   <% } %>
@@ -189,7 +194,7 @@
                   <label for="licenseDocument">License Document</label>
                   <input type="file" class="form-control" id="licenseDocument" name="licenseDocument" />
                   <% if (hostel && hostel.licenseDocument) { %>
-                  <a href="<%= hostel.licenseDocument %>" target="_blank">View Document</a>
+                  <a href="<%= hostel.licenseDocumentUrl %>" target="_blank">View Document</a>
                   <% } %>
                   <div id="licenseDocument-submit_errors" class="validation-error"></div>
                 </div>
@@ -238,6 +243,7 @@
         url = '/admin/hostels/' + hostelId;
         method = 'PUT';
       }
+       $('#form-loader').show();
 
       $.ajax({
         url: url,
@@ -246,9 +252,11 @@
         processData: false,
         contentType: false,
         success: function(response) {
+           $('#form-loader').hide();
           window.location.href = '/admin/hostels'; // redirect after save
         },
         error: function(res) {
+           $('#form-loader').hide();
           if (res.status == 400 || res.status == 422) {
             if (res.responseJSON && res.responseJSON.errors) {
               var error = res.responseJSON.errors;
