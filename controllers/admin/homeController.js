@@ -1,9 +1,20 @@
 const User = require('../../models/User');
+const Location = require('../../models/Location');
 
 
 exports.dashboard = (req, res) => {
   res.render('admin/dashboard',{ title: "Dashboard" });
 };
+
+
+exports.getLocations = async(req ,res) => {
+  try{
+    const locations = await Location.find();
+    res.json(locations);
+  }catch (err) {
+    res.status(500).json({ message: 'Error fetching stats', error: err });
+  }
+}
 
 
 exports.getDashboardStats = async (req, res) => {

@@ -1,4 +1,5 @@
 const Hostel = require('../../models/Hostel'); // Hostel model
+const Location = require('../../models/Location'); // Hostel model
 const path = require('path');
 const fs = require('fs');
 
@@ -12,7 +13,8 @@ exports.getList = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    res.render('admin/hostels/create', { title: "Create Hostel", hostel: null });
+     const locations = await Location.find();
+    res.render('admin/hostels/create', { title: "Create Hostel", hostel: null ,locations});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
