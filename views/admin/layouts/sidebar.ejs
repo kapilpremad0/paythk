@@ -1,7 +1,7 @@
 <div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">
   <div class="navbar-header">
     <ul class="nav navbar-nav flex-row">
-      <li class="nav-item me-auto"><a class="navbar-brand" href="/html/ltr/vertical-menu-template/index.html">
+      <li class="nav-item me-auto"><a class="navbar-brand" href="<%= '/admin' %>">
           <span class="brand-logo">
 
           </span>
@@ -19,8 +19,49 @@
       </li>
       <li class=" nav-item <%= currentRoute.startsWith('/admin/users') ? 'active' : '' %>"><a class="d-flex align-items-center" href="<%= '/admin/users' %>"><i data-feather="users"></i><span class="menu-title text-truncate" data-i18n="Form Validation">Users</span></a>
       </li>
-      <li class=" nav-item <%= currentRoute.startsWith('/admin/hostels') ? 'active' : '' %>"><a class="d-flex align-items-center" href="<%= '/admin/hostels' %>"><i data-feather="users"></i><span class="menu-title text-truncate" data-i18n="Form Validation">Hostels</span></a>
+      <li class=" nav-item <%= currentRoute.startsWith('/admin/partners') ? 'active' : '' %>"><a class="d-flex align-items-center" href="<%= '/admin/partners' %>"><i data-feather="users"></i><span class="menu-title text-truncate" data-i18n="Form Validation">Partners</span></a>
       </li>
+
+      <li class=" nav-item  ">
+
+        <a class="d-flex align-items-center" href="#"> <i data-feather="user"></i><span class="menu-title text-truncate" data-i18n="Invoice">Hostel</span>
+        </a>
+
+        <ul class="menu-content">
+          <li class="nav-item <%= currentRoute.startsWith('/admin/hostels') ? 'active' : '' %>">
+            <a class="d-flex align-items-center" href="<%= '/admin/hostels' %>"><i data-feather="circle"></i><span class="menu-title text-truncate" data-i18n="File Manager">List</span></a>
+          </li>
+
+        </ul>
+      </li>
+
+
+     <li class=" nav-item <%= currentRoute.startsWith('/admin/rentals') ? 'active' : '' %>"><a class="d-flex align-items-center" href="<%= '/admin/rentals' %>"><i data-feather="users"></i><span class="menu-title text-truncate" data-i18n="Form Validation">Rentals</span></a>
+      </li>
+      <!--  <li class=" nav-item <%= currentRoute.startsWith('/admin/hostels') ? 'active' : '' %>"><a class="d-flex align-items-center" href="<%= '/admin/hostels' %>"><i data-feather="users"></i><span class="menu-title text-truncate" data-i18n="Form Validation">Hostels</span></a>
+      </li>
+      <li class=" nav-item <%= currentRoute.startsWith('/admin/hostels') ? 'active' : '' %>"><a class="d-flex align-items-center" href="<%= '/admin/hostels' %>"><i data-feather="users"></i><span class="menu-title text-truncate" data-i18n="Form Validation">Rental</span></a>
+      </li>
+      <li class=" nav-item <%= currentRoute.startsWith('/admin/hostels') ? 'active' : '' %>"><a class="d-flex align-items-center" href="<%= '/admin/hostels' %>"><i data-feather="users"></i><span class="menu-title text-truncate" data-i18n="Form Validation">Restorent</span></a>
+      </li>
+      <li class=" nav-item <%= currentRoute.startsWith('/admin/hostels') ? 'active' : '' %>"><a class="d-flex align-items-center" href="<%= '/admin/hostels' %>"><i data-feather="users"></i><span class="menu-title text-truncate" data-i18n="Form Validation">Settings</span></a>
+      </li> -->
+
+
+      <!-- <li class=" nav-item  ">
+
+        <a class="d-flex align-items-center" href="#"> <i data-feather="user"></i><span class="menu-title text-truncate" data-i18n="Invoice">Hostel</span>
+        </a>
+
+        <ul class="menu-content">
+          <li class="nav-item <%= currentRoute.startsWith('/admin/hostels') ? 'active' : '' %>">
+            <a class="d-flex align-items-center" href="<%= '/admin/hostels' %>"><i data-feather="circle"></i><span class="menu-title text-truncate" data-i18n="File Manager">List</span></a>
+          </li>
+
+        </ul>
+      </li> -->
+
+
     </ul>
   </div>
 </div>
