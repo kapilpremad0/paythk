@@ -8,20 +8,29 @@
       <div class="col-xl-12 col-lg-12">
         <form id="submitForm" method="post" enctype="multipart/form-data">
           <!-- hidden field to detect edit mode -->
-          <input type="hidden" id="rental_id" name="rental_id" value="<%= rental ? rental._id : '' %>">
+          <input type="hidden" id="guide_id" name="guide_id" value="<%= guide ? guide._id : '' %>">
 
           <div class="card">
             <div class="card-header">
-              <h3><%= rental ? 'Edit Rental' : 'Create Rental' %></h3>
+              <h3><%= guide ? 'Edit Guide' : 'Create Guide' %></h3>
             </div>
             <div class="card-body">
               <div class="row">
 
-                <!-- Rental Name -->
+                <!-- guide Name -->
                 <div class="mb-1 col-md-6">
-                  <label for="name">Rental Name</label>
-                  <input type="text" class="form-control" id="name" name="name" value="<%= rental ? rental.name : '' %>" placeholder="Enter rental name" required />
+                  <label for="name">Guide Name</label>
+                  <input type="text" class="form-control" id="name" name="name" value="<%= guide ? guide.name : '' %>" placeholder="Enter guide name" required />
                   <div id="name-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="profile">Profile Image</label>
+                  <input type="file" class="form-control" id="profile" name="profile" />
+                  <% if (guide && guide.profile_url) { %>
+                  <img src="<%= guide.profile_url %>" alt="Profile" width="50" class="mt-1 rounded" />
+                  <% } %>
+                  <div id="profile-submit_errors" class="validation-error"></div>
                 </div>
 
                 <!-- Location -->
@@ -30,7 +39,7 @@
                   <select name="location" class="form-select select2">
                     <option value="">-- Select Location --</option>
                     <% locations.forEach(loc => { %>
-                    <option value="<%= loc._id %>" <%= rental && rental.location && rental.location.toString() === loc._id.toString() ? 'selected' : '' %>>
+                    <option value="<%= loc._id %>" <%= guide && guide.location && guide.location.toString() === loc._id.toString() ? 'selected' : '' %>>
 
                       <%= loc.city %>,
                       <%= loc.state %></option>
@@ -39,47 +48,54 @@
                   <div id="location-submit_errors" class="validation-error"></div>
                 </div>
 
+
+                <div class="mb-1 col-md-6">
+                  <label for="languages">Languages Spoken</label>
+                  <select name="languages[]" id="languages" class="form-select select2" multiple>
+                    <% languages.forEach(lang => { %>
+                    <option value="<%= lang %>" <%= guide && guide.languages && guide.languages.includes(lang) ? 'selected' : '' %>>
+                      <%= lang %>
+                    </option>
+                    <% }) %>
+                  </select>
+                  <div id="languages-submit_errors" class="validation-error"></div>
+                </div>
+
                 <!-- Address -->
                 <div class="mb-1 col-md-12">
                   <label for="address">Address</label>
-                  <textarea class="form-control" id="address" name="address" rows="2" placeholder="Enter full address"><%= rental ? rental.address : '' %></textarea>
+                  <textarea class="form-control" id="address" name="address" rows="2" placeholder="Enter full address"><%= guide ? guide.address : '' %></textarea>
                 </div>
 
                 <!-- Terms -->
                 <div class="mb-1 col-md-12">
                   <label for="terms">Terms & Conditions</label>
-                  <textarea class="form-control" id="terms" name="terms" rows="3" placeholder="Enter terms & conditions"><%= rental ? rental.terms : '' %></textarea>
+                  <textarea class="form-control" id="terms" name="terms" rows="3" placeholder="Enter terms & conditions"><%= guide ? guide.terms : '' %></textarea>
                 </div>
 
                 <div class="mb-1 col-md-6">
                   <label for="contactPerson">Contact Person</label>
-                  <input type="text" class="form-control" id="contactPerson" name="contactPerson" value="<%= rental ? rental.contactPerson : '' %>" placeholder="Enter contact person" />
+                  <input type="text" class="form-control" id="contactPerson" name="contactPerson" value="<%= guide ? guide.contactPerson : '' %>" placeholder="Enter contact person" />
                   <div id="contactPerson-submit_errors" class="validation-error"></div>
                 </div>
 
                 <div class="mb-1 col-md-6">
                   <label for="contactNumber">Contact Number</label>
-                  <input type="text" class="form-control" id="contactNumber" name="contactNumber" value="<%= rental ? rental.contactNumber : '' %>" placeholder="Enter contact number" />
+                  <input type="text" class="form-control" id="contactNumber" name="contactNumber" value="<%= guide ? guide.contactNumber : '' %>" placeholder="Enter contact number" />
                   <div id="contactNumber-submit_errors" class="validation-error"></div>
                 </div>
 
                 <div class="mb-1 col-md-6">
                   <label for="email">Email</label>
-                  <input type="email" class="form-control" id="email" name="email" value="<%= rental ? rental.email : '' %>" placeholder="Enter email address" />
+                  <input type="email" class="form-control" id="email" name="email" value="<%= guide ? guide.email : '' %>" placeholder="Enter email address" />
                   <div id="email-submit_errors" class="validation-error"></div>
-                </div>
-
-                <div class="mb-1 col-md-6">
-                  <label for="website">Website</label>
-                  <input type="text" class="form-control" id="website" name="website" value="<%= rental ? rental.website : '' %>" placeholder="Enter website URL" />
-                  <div id="website-submit_errors" class="validation-error"></div>
                 </div>
 
                 <div class="mb-1 col-md-6">
                   <label for="images">Images</label>
                   <input type="file" class="form-control" id="images" name="images" multiple />
-                  <% if (rental && rental.images && rental.images.length > 0) { %>
-                  <% rental.imageUrls.forEach(img => { %>
+                  <% if (guide && guide.images && guide.images.length > 0) { %>
+                  <% guide.imageUrls.forEach(img => { %>
                   <img src="<%= img %>" alt="Image" width="50" class="mt-1 rounded" />
                   <% }) %>
                   <% } %>
@@ -90,7 +106,7 @@
                 <!-- Description -->
                 <div class="mb-3 col-md-12">
                   <label for="description">Description</label>
-                  <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description"><%= rental ? rental.description : '' %></textarea>
+                  <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description"><%= guide ? guide.description : '' %></textarea>
                 </div>
 
                 <div class="mb-2 ">
@@ -105,7 +121,7 @@
                       <th>Open Time</th>
                       <th>Close Time</th>
                       <th>Price</th>
-                      <th>Late Fees</th>
+                      <!-- <th>Late Fees</th> -->
                     </tr>
                   </thead>
                   <tbody>
@@ -131,9 +147,9 @@
                       <td>
                         <input type="number" class="form-control" name="availability[<%= i %>][price]" value="<%= av ? av.price : '' %>" />
                       </td>
-                      <td>
-                        <input type="number" class="form-control" name="availability[<%= i %>][late_fees]" value="<%= av ? av.late_fees : '' %>" />
-                      </td>
+                      <!-- <td>
+        <input type="number" class="form-control" name="availability[<%= i %>][late_fees]" value="<%= av ? av.late_fees : '' %>" />
+      </td> -->
                     </tr>
                     <% }) %>
                   </tbody>
@@ -144,7 +160,7 @@
                 <div class="mb-2">
                   <!-- Submit -->
                   <button type="submit" class="btn btn-primary mt-3">
-                    <%= rental ? 'Update Rental' : 'Save Rental' %>
+                    <%= guide ? 'Update guide' : 'Save guide' %>
                   </button>
                 </div>
 
@@ -173,13 +189,13 @@
       $('.validation-error').text('');
 
       const formData = new FormData(this);
-      const rentalId = $('#rental_id').val();
+      const guideId = $('#guide_id').val();
 
-      let url = '/admin/rentals';
+      let url = '/admin/guides';
       let method = 'POST';
 
-      if (rentalId) { // editing
-        url = '/admin/rentals/' + rentalId;
+      if (guideId) { // editing
+        url = '/admin/guides/' + guideId;
         method = 'PUT';
       }
       $('#form-loader').show();
@@ -192,7 +208,7 @@
         contentType: false,
         success: function(response) {
           $('#form-loader').hide();
-          window.location.href = '/admin/rentals'; // redirect after save
+          window.location.href = '/admin/guides'; // redirect after save
         },
         error: function(res) {
           $('#form-loader').hide();
