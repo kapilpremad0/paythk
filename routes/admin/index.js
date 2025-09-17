@@ -8,6 +8,7 @@ router.use('/users', require('../admin/userRoutes'));
 router.use('/hostels', require('../admin/hostelRoutes'));
 router.use('/rentals', require('../admin/rentalRoutes'));
 router.use('/guides', require('../admin/guideRoutes'));
-router.use('/cafes', require('../admin/cafeRoutes'));
+router.use('/cafes', require('./cafeRoutes.js'));
+router.use('/settings', require('./settingRoutes.js'));
 
 module.exports = router;
