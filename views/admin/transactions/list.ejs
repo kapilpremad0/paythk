@@ -1,0 +1,85 @@
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-body">
+      <div class="row" id="table-bordered">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h4 class="card-title">Transactions</h4>
+            </div>
+
+            <div class="card-body">
+              <div class="table-responsive card card-company-table">
+                <table class="table" id="transactionsTable">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>User</th>
+                      <th>Amount</th>
+                      <th>Type</th>
+                      <th>Reason</th>
+                      <th>Description</th>
+                      <th>Balance After</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  $(document).ready(function() {
+    var table = $('#transactionsTable').DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: '/admin/transactions/data',
+        type: 'POST',
+        contentType: 'application/json',
+        data: function(d) {
+          return JSON.stringify(d);
+        }
+      },
+      columns: [
+        {
+          data: null,
+          render: function(data, type, row, meta) {
+            return meta.settings._iDisplayStart + meta.row + 1;
+          },
+          searchable: false
+        },
+        { data: 'user', defaultContent: '-' },  // populated with populate('userId')
+        { data: 'amount' },
+        { 
+          data: 'type',
+          render: data => data === 'credit' 
+            ? '<span class="badge bg-success">Credit</span>' 
+            : '<span class="badge bg-danger">Debit</span>'
+        },
+        { data: 'reason' },
+        { data: 'description' },
+        { data: 'balance_after' },
+        { 
+          data: 'createdAt',
+          render: d => new Date(d).toLocaleString()
+        }
+       
+      ],
+      drawCallback: function(settings) {
+        feather.replace();
+      }
+    });
+    
+  });
+</script>

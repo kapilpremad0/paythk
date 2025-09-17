@@ -10,5 +10,6 @@ router.use('/rentals', require('../admin/rentalRoutes'));
 router.use('/guides', require('../admin/guideRoutes'));
 router.use('/cafes', require('./cafeRoutes.js'));
 router.use('/settings', require('./settingRoutes.js'));
+router.use('/transactions', require('./transactionRoutes.js'));
 
 module.exports = router;
