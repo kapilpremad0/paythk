@@ -17,6 +17,7 @@ const availabilitySchema = new mongoose.Schema({
   price: { type: Number, required: true },
   late_fees: { type: Number, default: 0 },
   status: { type: String, enum: ["active","inactive"], default: "active" }, // ✅ New status field
+  available_table: { type: Number, default: 0 },  // track available ones
 
 }, { timestamps: true });
 
