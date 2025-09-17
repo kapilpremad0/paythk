@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Setting = require('../models/Setting');
+const Wallet = require('../models/Wallet');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sendSMS = require('../utils/sendSMS');
+const { logWalletTransaction } = require('../helpers/wallet');
+
 
 // Helper: Format validation error
 const formatError = (field, message) => ({ [field]: message });
@@ -17,7 +21,7 @@ function generateOTP(length = 4) {
 
 exports.register = async (req, res) => {
     try {
-        const { name, mobile, password, type, email } = req.body || {};
+        const { name, mobile, password, type, email, referral_code } = req.body || {};
         const errors = {};
 
         if (!name) {
@@ -38,13 +42,6 @@ exports.register = async (req, res) => {
             Object.assign(errors, formatError('password', 'The password must be at least 6 characters.'));
         }
 
-        if (!type)
-            Object.assign(errors, formatError('type', 'The type field is required.'));
-        else if (!type.trim()) Object.assign(errors, formatError('type', 'The type field is required.'));
-        else if (!allowedTypes.includes(type.toLowerCase())) {
-            Object.assign(errors, formatError('type', `The type must be one of: ${allowedTypes.join(', ')}`));
-        }
-
 
         if (!email) {
             Object.assign(errors, formatError('email', 'The email field is required.'));
@@ -54,25 +51,30 @@ exports.register = async (req, res) => {
             Object.assign(errors, formatError('email', 'The email must be a valid email address.'));
         }
 
+        const userExists = await User.findOne({ mobile });
+
+        if (userExists) {
+            Object.assign(errors, formatError('mobile', 'Mobile number is already registered'));
+        }
+        const userEmailExists = await User.findOne({ email });
+        if (userEmailExists) {
+            Object.assign(errors, formatError('email', 'Email is already registered'));
+        }
+
+        let referrer = null;
+
+        if (referral_code) {
+            referrer = await User.findOne({ referralCode: referral_code });
+            if (!referrer) {
+                Object.assign(errors, formatError('referral_code', 'Invalid referral code'));
+            }
+
+        }
+
         if (Object.keys(errors).length > 0) {
             return res.status(422).json({ message: 'Validation Error', errors });
         }
 
-        const userExists = await User.findOne({ mobile });
-        if (userExists) {
-            return res.status(422).json({
-                message: 'Validation Error',
-                errors: formatError('mobile', `Mobile number is already registered as ${userExists.user_type}`)
-            });
-        }
-
-        const userEmailExists = await User.findOne({ email });
-        if (userEmailExists) {
-            return res.status(422).json({
-                message: 'Validation Error',
-                errors: formatError('email', `Email is already registered as ${userEmailExists.user_type}`)
-            });
-        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -80,22 +82,57 @@ exports.register = async (req, res) => {
             name,
             mobile,
             password: hashedPassword,
-            user_type: type,
             email: email
         });
+
+
+
+        if (referrer) {
+            newUser.fromReferral = referrer._id;
+            // ✅ Fetch bonuses from settings
+            const settings = await Setting.find({
+                key: { $in: ["referral_bonus", "welcome_bonus"] }
+            });
+
+            let referralBonus = 0;
+            let welcomeBonus = 0;
+
+            settings.forEach(s => {
+                if (s.key === "referral_bonus") referralBonus = Number(s.value) || 0;
+                if (s.key === "welcome_bonus") welcomeBonus = Number(s.value) || 0;
+            });
+
+            if (welcomeBonus > 0) {
+                await logWalletTransaction({
+                    userId: newUser._id,
+                    amount: welcomeBonus,
+                    type: "credit",
+                    reason: "Welcome Bonus",
+                    description: `Welcome bonus of ₹${welcomeBonus} credited`,
+                });
+            }
+
+            if (referralBonus > 0) {
+                await logWalletTransaction({
+                    userId: referrer._id,
+                    amount: referralBonus,
+                    type: "credit",
+                    reason: "Referral Bonus",
+                    description: `Referral bonus of ₹${referralBonus} credited for inviting ${newUser.name}`,
+                });
+            }
+        }
+
+        await newUser.save();
 
         const otp = generateOTP(6);
         const otpExpiry = Date.now() + 5 * 60 * 1000; // 5 min from now
 
-        // Save OTP & expiry in DB
         newUser.otp = otp;
         newUser.otpExpiry = otpExpiry;
 
-        await newUser.save();
-
         const payload = { user: { id: newUser.id } };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1Y' });
 
         return res.status(200).json({
             message: 'User registered successfully',
@@ -103,7 +140,6 @@ exports.register = async (req, res) => {
             token,
             mobile,
             name,
-            user_type: type
         });
     } catch (err) {
         console.error('Register Error:', err);
