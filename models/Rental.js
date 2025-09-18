@@ -19,6 +19,31 @@ const rentalSchema = new mongoose.Schema({
   
 }, { timestamps: true });
 
+rentalSchema.virtual("availabilities", {
+  ref: "Availability",
+  localField: "_id",
+  foreignField: "parentId",
+  justOne: false,
+  match: { parentType: "Rental" } // ensure only Rental availability is fetched
+});
+
+rentalSchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.action_div;  // remove action_div from response
+    return ret;
+  }
+});
+
+rentalSchema.set("toObject", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.action_div;
+    return ret;
+  }
+});
+
+
 rentalSchema.virtual('imageUrls').get(function () {
   const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
   return this.images.map(img => `${baseUrl}/uploads/${img}`);

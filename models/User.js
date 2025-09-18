@@ -33,6 +33,8 @@ const UserSchema = new mongoose.Schema({
     enum: ['male', 'female', 'other', null],
     default: null
   },
+  interests: [{ type: String }],
+  avtar: { type: String, default: null },
   dob: { type: Date, default: null }, // Date of birth
   password: {
     type: String,
@@ -45,9 +47,6 @@ const UserSchema = new mongoose.Schema({
   otp: { type: String },
   otpExpiry: { type: Date },
 
-  emergencyContact: { type: String, default: null },
-  homeAddress: { type: String, default: null },
-
   referralCode: {
     type: String,
     unique: true
@@ -58,6 +57,7 @@ const UserSchema = new mongoose.Schema({
     default: null
   },
   wallet_balance: { type: Number, default: 0 },
+  images: [{ type: String }],
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
@@ -120,27 +120,14 @@ UserSchema.virtual('profile_url').get(function () {
   return `${baseUrl}${uploadPath}`;
 });
 
-UserSchema.virtual('document_urls').get(function () {
+UserSchema.virtual('imageUrls').get(function () {
   const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
-
-  // Convert to plain object to remove mongoose prototype methods
-  const docsRaw = this.documents ? this.documents.toObject() : {};
-  const docs = {};
-
-  for (let key in docsRaw) {
-    const val = docsRaw[key];
-
-    if (typeof val === 'string' && val.trim() !== '') {
-      docs[key] = val.startsWith('http')
-        ? val
-        : `${baseUrl}/uploads/${val}`;
-    } else {
-      docs[key] = null;
-    }
+  if (!this.images || !Array.isArray(this.images)) {
+    return []; // return empty array if no images
   }
-
-  return docs;
+  return this.images.map(img => `${baseUrl}/uploads/${img}`);
 });
+
 
 
 
@@ -185,5 +172,22 @@ UserSchema.virtual("action_div").get(function () {
     </div>
   `;
 });
+
+UserSchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.action_div;  // remove action_div from response
+    return ret;
+  }
+});
+
+UserSchema.set("toObject", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.action_div;
+    return ret;
+  }
+});
+
 
 module.exports = mongoose.model('User', UserSchema);
