@@ -6,7 +6,7 @@ const verifyToken = require('../../middlewares/auth.js'); // 👈 Import middlew
 router.use('/auth', require('../api/auth'));
 router.use('/', require('../api/home.js'));
 router.use('/profile', verifyToken, require('../api/profile'));
-router.use('/chat', require('../api/chat'));
+router.use('/chat', verifyToken, require('../api/chat'));
 router.use('/rentals', require('../api/rental'));
 router.use('/cafes', require('../api/cafe'));
 router.use('/guides', require('../api/guide'));

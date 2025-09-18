@@ -2,7 +2,11 @@ const express = require('express');
 const router = express.Router();
 const Message = require('../../models/Message');
 
+const chatController = require('../../controllers/api/chatController.js');
 
+
+router.get('/',chatController.getMyRooms);
+router.get('/:id',chatController.getRoomMessages);
 
 
 
