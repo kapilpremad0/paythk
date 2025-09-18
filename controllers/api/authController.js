@@ -171,7 +171,7 @@ exports.login = async (req, res) => {
             return res.status(422).json({ message: 'Validation Error', errors });
         }
 
-        const user = await User.findOne({ mobile });
+        const user = await User.findOne({ mobile});
         if (!user) {
             return res.status(422).json({
                 message: 'Validation Error',
@@ -195,37 +195,8 @@ exports.login = async (req, res) => {
             message: 'Login successful',
             token,
             name: user.name,
-            user_type: user.user_type,
-            is_verify: true,
             otp_verify: user.otp_verify
         };
-
-        if (type == 'driver') {
-
-            if (!user.ssn || user.ssn.trim() === '') {
-                response.is_verify = false;
-                response.pending_step = 'personal_info';
-            }
-            else if (
-                !user.driverCredentials ||
-                !user.driverCredentials.licenseNumber ||
-                !user.driverCredentials.licenseIssueDate ||
-                !user.driverCredentials.licenseExpiryDate
-            ) {
-                response.is_verify = false;
-                response.pending_step = 'driver_credential';
-            }
-            else if (
-                !user.documents ||
-                !user.documents.licenseFront ||
-                !user.documents.licenseBack ||
-                !user.documents.addressFront ||
-                !user.documents.addressBack
-            ) {
-                response.is_verify = false;
-                response.pending_step = 'documents';
-            }
-        }
 
         return res.json(response);
     } catch (err) {

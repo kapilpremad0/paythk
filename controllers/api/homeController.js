@@ -40,35 +40,77 @@ exports.getLocations = async (req, res) => {
 
 exports.generalSettings = async (req, res) => {
     try {
-        const leaveReasons = [
-            "Personal reasons",
-            "Medical or health issues",
-            "Family emergency",
-            "Vacation or holiday",
-            "Maternity/Paternity leave",
-            "Bereavement leave",
-            "Marriage leave",
-            "Relocation",
-            "Official work or training",
-            "Other"
+        const interests = [
+            "Traveling",
+            "Cooking",
+            "Reading",
+            "Music",
+            "Dancing",
+            "Movies",
+            "Fitness",
+            "Sports",
+            "Yoga",
+            "Photography",
+            "Painting",
+            "Writing",
+            "Hiking",
+            "Cycling",
+            "Gaming",
+            "Technology",
+            "Fashion",
+            "Shopping",
+            "Pets",
+            "Gardening",
+            "Meditation",
+            "Volunteering",
+            "Foodie",
+            "Art",
+            "Theater",
+            "Singing",
+            "Blogging",
+            "DIY",
+            "Crafts",
+            "Fishing",
+            "Camping",
+            "Swimming",
+            "Running",
+            "Adventure Sports",
+            "Collecting",
+            "Investing",
+            "Travel Blogging",
+            "Coding",
+            "Astrology",
+            "History",
+            "Science",
+            "Languages",
+            "Board Games",
+            "Anime",
+            "Comics",
+            "Cars",
+            "Motorcycles",
+            "Makeup",
+            "Interior Design",
+            "Stand-up Comedy",
+            "Podcasts",
+            "Wine Tasting",
+            "Beer Brewing",
+            "Spirituality",
+            "Photography Editing",
+            "Poetry",
+            "Astronomy",
+            "Cooking International Food",
+            "Street Food",
+            "Public Speaking",
+            "Social Media",
+            "Karaoke"
         ];
-        const passengerReasons = [
-            "Need to attend to a quick errand",
-            "Waiting for someone to arrive",
-            "Change of destination",
-            "Taking a short break",
-            "Phone call or emergency",
-            "Vehicle issue reported",
-            "Feeling unwell",
-            "Other"
-        ];
+
 
         const baseUrl = `${req.protocol}://${req.get('host')}`;
         const termsUrl = `${baseUrl}/api/terms`; // or `${baseUrl}/static/terms/bus-tracking-terms.html`
 
         return res.json({
-            pause_ride_reason: passengerReasons,
-            leave_request_reasons: leaveReasons,
+            interests,
             terms_url: termsUrl,
             languages
         });
