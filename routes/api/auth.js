@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const playController = require('../controllers/authController');
+const playController = require('../../controllers/api/authController');
 
 
 router.post('/register',playController.register);

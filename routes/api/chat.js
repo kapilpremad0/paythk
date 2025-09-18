@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Message = require('../models/Message');
+const Message = require('../../models/Message');
 
 // Get chat history between 2 users
 router.get('/:userId/:otherUserId', async (req, res) => {

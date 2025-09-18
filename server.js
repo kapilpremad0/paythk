@@ -83,10 +83,13 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/admin', require('./routes/admin/index.js'));
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api', require('./routes/api.js'));
-app.use('/api/profile', verifyToken, require('./routes/profile'));
-app.use('/api/chat', require('./routes/chat'));
+app.use('/api', require('./routes/api/index.js'));
+
+
+// app.use('/api/auth', require('./routes/auth'));
+// app.use('/api', require('./routes/api.js'));
+// app.use('/api/profile', verifyToken, require('./routes/profile'));
+// app.use('/api/chat', require('./routes/chat'));
 
 // Flash messages middleware
 app.use((req, res, next) => {

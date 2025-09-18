@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
-const Setting = require('../models/Setting');
-const Wallet = require('../models/Wallet');
+const User = require('../../models/User');
+const Setting = require('../../models/Setting');
+const Wallet = require('../../models/Wallet');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const sendSMS = require('../utils/sendSMS');
-const { logWalletTransaction } = require('../helpers/wallet');
+const sendSMS = require('../../utils/sendSMS');
+const { logWalletTransaction } = require('../../helpers/wallet');
 
 
 // Helper: Format validation error
@@ -165,24 +165,17 @@ exports.login = async (req, res) => {
         if (!password) {
             Object.assign(errors, formatError('password', 'The password field is required.'));
         }
-
-
-        if (!type)
-            Object.assign(errors, formatError('type', 'The type field is required.'));
-        else if (!type.trim()) Object.assign(errors, formatError('type', 'The type field is required.'));
-        else if (!allowedTypes.includes(type.toLowerCase())) {
-            Object.assign(errors, formatError('type', `The type must be one of: ${allowedTypes.join(', ')}`));
-        }
+       
 
         if (Object.keys(errors).length > 0) {
             return res.status(422).json({ message: 'Validation Error', errors });
         }
 
-        const user = await User.findOne({ mobile, user_type: type });
+        const user = await User.findOne({ mobile });
         if (!user) {
             return res.status(422).json({
                 message: 'Validation Error',
-                errors: formatError('mobile', `No ${type} account is registered with the mobile number ${mobile}.`)
+                errors: formatError('mobile', `No account is registered with the mobile number ${mobile}.`)
             });
         }
 

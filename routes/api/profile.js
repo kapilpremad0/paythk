@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const playController = require('../controllers/profileController');
-const upload = require('../middlewares/upload');
+const playController = require('../../controllers/api/profileController');
+const upload = require('../../middlewares/upload');
 
 
 router.post('/update-address', playController.updateAddress);
