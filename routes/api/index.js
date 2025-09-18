@@ -10,6 +10,7 @@ router.use('/chat', require('../api/chat'));
 router.use('/rentals', require('../api/rental'));
 router.use('/cafes', require('../api/cafe'));
 router.use('/guides', require('../api/guide'));
+router.use('/find_buddies', verifyToken, require('../api/buddie'));
 
 
 

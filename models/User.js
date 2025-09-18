@@ -126,6 +126,8 @@ UserSchema.virtual('imageUrls').get(function () {
 });
 
 
+
+
 UserSchema.virtual("name_div").get(function () {
   return `
     <div class="d-flex align-items-center">
@@ -167,5 +169,22 @@ UserSchema.virtual("action_div").get(function () {
     </div>
   `;
 });
+
+UserSchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.action_div;  // remove action_div from response
+    return ret;
+  }
+});
+
+UserSchema.set("toObject", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.action_div;
+    return ret;
+  }
+});
+
 
 module.exports = mongoose.model('User', UserSchema);
