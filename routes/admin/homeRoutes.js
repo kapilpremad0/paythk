@@ -10,6 +10,6 @@ router.get('/login',loginController.showLoginPage)
 router.post('/login',loginController.login)
 router.get('/logout',loginController.logout)
 router.get('/stats', homeController.getDashboardStats)
-
+router.get('/locations',homeController.getLocations);
 
 module.exports = router;

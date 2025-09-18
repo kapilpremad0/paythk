@@ -1,0 +1,144 @@
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-header row"></div>
+    <div class="content-body">
+
+      <div class="col-xl-12 col-lg-12">
+        <form id="submitForm" method="post" enctype="multipart/form-data">
+          <!-- hidden field to detect edit mode -->
+
+          <div class="card">
+
+            <div class="card-body">
+              <div class="row">
+                <!-- ================= Service Commission Table ================= -->
+                <div class="col-md-6 mb-2">
+                  <h4>Service Commissions</h4>
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Service</th>
+                        <th>Commission (%)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Guest</td>
+                        <td><input type="number" class="form-control" name="guest_commission" value="<%= settings.guest_commission || '' %>" placeholder="%" /></td>
+                      </tr>
+                      <tr>
+                        <td>Hostel</td>
+                        <td><input type="number" class="form-control" name="hostel_commission" value="<%= settings.hostel_commission || '' %>" placeholder="%" /></td>
+                      </tr>
+                      <tr>
+                        <td>Cafe</td>
+                        <td><input type="number" class="form-control" name="cafe_commission" value="<%= settings.cafe_commission || '' %>" placeholder="%" /></td>
+                      </tr>
+                      <tr>
+                        <td>Rental</td>
+                        <td><input type="number" class="form-control" name="rental_commission" value="<%= settings.rental_commission || '' %>" placeholder="%" /></td>
+                      </tr>
+                      <tr>
+                        <td>Guide</td>
+                        <td><input type="number" class="form-control" name="guide_commission" value="<%= settings.guide_commission || '' %>" placeholder="%" /></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- ================= Referral Settings Table ================= -->
+                <div class="col-md-6 mb-2">
+                  <h4>Referral Settings</h4>
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Setting</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                      <tr>
+                        <td>Welcome Bonus</td>
+                        <td><input type="number" class="form-control" name="welcome_bonus" value="<%= settings.welcome_bonus || '' %>" /></td>
+                      </tr>
+                      <tr>
+                        <td>Referral Bonus</td>
+                        <td><input type="number" class="form-control" name="referral_bonus" value="<%= settings.referral_bonus || '' %>" /></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- ================= Submit Button ================= -->
+                <div class="col-md-12">
+                  <button type="submit" class="btn btn-primary mt-3">Save Settings</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+
+
+
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#submitForm').on('submit', function(e) {
+      e.preventDefault();
+      $('.validation-error').text('');
+
+      const formData = new FormData(this);
+      const settingId = $('#setting_id').val();
+
+      let url = '/admin/settings';
+      let method = 'POST';
+
+      if (settingId) { // editing
+        url = '/admin/settings/' + settingId;
+        method = 'PUT';
+      }
+      $('#form-loader').show();
+
+      $.ajax({
+        url: url,
+        method: method,
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          $('#form-loader').hide();
+          window.location.href = '/admin/settings'; // redirect after save
+        },
+        error: function(res) {
+          $('#form-loader').hide();
+          if (res.status == 400 || res.status == 422) {
+            if (res.responseJSON && res.responseJSON.errors) {
+              var error = res.responseJSON.errors;
+              $.each(error, function(key, value) {
+                $("#" + key + "-submit_errors").text(value);
+              });
+            }
+          }
+          if (res.status == 500) {
+            showErrorToast(res.responseJSON.error);
+          }
+          if (res.status == 404) {
+            showErrorToast('Something went wrong');
+          }
+        }
+      });
+    });
+  });
+</script>

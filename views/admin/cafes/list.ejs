@@ -22,20 +22,19 @@
                 </select>
               </div>
 
-              <a href="<%= '/admin/hostels/create' %>" class="btn btn-primary">Create Hostel</a>
+              <a href="<%= '/admin/cafes/create' %>" class="btn btn-primary">Create Cafe</a>
             </div>
 
             <div class="card-body">
               <div class="table-responsive card card-company-table">
-                <table class="table" id="hostelsTable">
+                <table class="table" id="cafesTable">
                   <thead>
                     <tr>
                       <th>#</th>
                       <th>Name</th>
-                      <th>Type</th>
                       <th>City</th>
                       <th>State</th>
-                      <th>Monthly Fee</th>
+                      <th>Address</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -51,19 +50,19 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteHostelModal" tabindex="-1" aria-labelledby="deleteHostelModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteRentalModal" tabindex="-1" aria-labelledby="deleteRentalModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Delete Hostel</h5>
+        <h5 class="modal-title">Delete Rental</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        Are you sure you want to delete <strong id="deleteHostelName"></strong>?
+        Are you sure you want to delete <strong id="deleteRentalName"></strong>?
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" id="confirmDeleteHostel" class="btn btn-danger">Delete</button>
+        <button type="button" id="confirmDeleteRental" class="btn btn-danger">Delete</button>
       </div>
     </div>
   </div>
@@ -72,12 +71,15 @@
 <script>
   $(document).ready(function() {
     // Initialize DataTable
-    var table = $('#hostelsTable').DataTable({
-      columnDefs: [{ orderable: false, targets: -1 }],
+    var table = $('#cafesTable').DataTable({
+      columnDefs: [{
+        orderable: false,
+        targets: -1
+      }],
       processing: true,
       serverSide: true,
       ajax: {
-        url: '/admin/hostels/data',
+        url: '/admin/cafes/data',
         type: 'POST',
         contentType: 'application/json',
         data: function(d) {
@@ -86,20 +88,31 @@
           return JSON.stringify(d);
         }
       },
-      columns: [
-        {
+      columns: [{
           data: null,
           render: function(data, type, row, meta) {
             return meta.settings._iDisplayStart + meta.row + 1;
           },
           searchable: false
         },
-        { data: 'name' },
-        { data: 'type', render: data => data ? data.toUpperCase() : '' },
-        { data: 'city', render: data => data ? data.toUpperCase() : '' },
-        { data: 'state', render: data => data ? data.toUpperCase() : '' },
-        { data: 'monthlyFee', render: data => data ? `$${data}` : '' },
-        { data: 'action' }
+        {
+          data: 'name'
+        },
+        {
+          data: 'city',
+          render: data => data ? data.toUpperCase() : ''
+        },
+        {
+          data: 'state',
+          render: data => data ? data.toUpperCase() : ''
+        },
+        {
+          data: 'address',
+          render: data => data ? `${data}` : ''
+        },
+        {
+          data: 'action'
+        }
       ],
       drawCallback: function(settings) {
         feather.replace(); // replace icons
@@ -111,30 +124,30 @@
       table.ajax.reload();
     });
 
-    // Delete Hostel
-    let deleteHostelId = null;
+    // Delete Rental
+    let deleteRentalId = null;
 
-    $(document).on("click", ".delete-hostel", function() {
-      deleteHostelId = $(this).data("id");
-      let hostelName = $(this).data("name");
-      $("#deleteHostelName").text(hostelName);
-      $("#deleteHostelModal").modal("show");
+    $(document).on("click", ".delete-cafe", function() {
+      deleteRentalId = $(this).data("id");
+      let RentalName = $(this).data("name");
+      $("#deleteRentalName").text(RentalName);
+      $("#deleteRentalModal").modal("show");
     });
 
-    $("#confirmDeleteHostel").on("click", function() {
-      if (!deleteHostelId) return;
+    $("#confirmDeleteRental").on("click", function() {
+      if (!deleteRentalId) return;
 
       $.ajax({
-        url: "/admin/hostels/" + deleteHostelId,
+        url: "/admin/cafes/" + deleteRentalId,
         type: "DELETE",
         success: function(response) {
-          $("#deleteHostelModal").modal("hide");
+          $("#deleteRentalModal").modal("hide");
           table.ajax.reload();
-          showSuccessToast("Hostel deleted successfully!");
+          showSuccessToast("Cafe deleted successfully!");
         },
         error: function(err) {
-          $("#deleteHostelModal").modal("hide");
-          showErrorToast("Failed to delete hostel!");
+          $("#deleteRentalModal").modal("hide");
+          showErrorToast("Failed to delete Cafe!");
         }
       });
     });
