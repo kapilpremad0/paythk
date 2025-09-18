@@ -24,6 +24,7 @@ exports.getData = async (req, res) => {
         const start = parseInt(req.body.start) || 0;
         const length = parseInt(req.body.length) || 10;
         const search = req.body.search?.value || "";
+        const userId = req.body.userId || "";
 
         const query = {};
 
@@ -34,6 +35,11 @@ exports.getData = async (req, res) => {
                 { description: new RegExp(search, "i") },
             ];
         }
+
+        if (userId) {
+            query.userId = userId;
+        }
+        console.log(query);
 
         const totalRecords = await Transaction.countDocuments();
         const filteredRecords = await Transaction.countDocuments(query);
@@ -53,7 +59,7 @@ exports.getData = async (req, res) => {
             reason: tx.reason || "",
             description: tx.description || "",
             balance_after: tx.balance_after,
-            createdAt: tx.createdAt ,
+            createdAt: tx.createdAt,
         }));
 
         res.json({

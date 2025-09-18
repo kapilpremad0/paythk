@@ -67,7 +67,10 @@ exports.getData = async (req, res) => {
     const search = req.body.search?.value || "";
     const gender = req.body.gender; // Get the status filter
 
-    const query = { user_type: "customer", otp_verify: true };
+    const query = {
+      user_type: "customer",
+      otp_verify: true
+    };
 
     // Search condition
     if (search) {
@@ -101,6 +104,7 @@ exports.getData = async (req, res) => {
       gender: item.gender,
       dob: item.dob_formatted,
       name: item.name_div,
+      wallet_amount: `<span class="badge rounded-pill badge-light-dark me-1">${item.wallet_balance}</span>`,
 
       // status: item.status === 1
       //   ? `<span class="badge rounded-pill badge-light-primary me-1">Active</span>`

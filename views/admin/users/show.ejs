@@ -8,10 +8,11 @@
       <div class="col-xl-12 col-lg-12">
         <div class="card">
           <div class="card-header">
-            <h4 class="card-title"><%= user.name %> Details 
+            <h4 class="card-title"><%= user.name %> Details
               <a href="/admin/users/edit/<%= user._id %>">
                 <i data-feather="edit" class="me-50"></i>
-              </a></h4>
+              </a>
+            </h4>
           </div>
           <div class="card-body">
 
@@ -24,6 +25,11 @@
               <li class="nav-item">
                 <a class="nav-link" id="bookings-tab-justified" data-bs-toggle="tab" href="#bookings-just" role="tab" aria-controls="bookings-just" aria-selected="false">
                   Bookings
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="wallet_transaction-tab-justified" data-bs-toggle="tab" href="#wallet_transaction-just" role="tab" aria-controls="wallet_transaction-just" aria-selected="false">
+                  Wallet Transaction
                 </a>
               </li>
             </ul>
@@ -130,11 +136,95 @@
                 <% } %>
               </div>
 
+              <div class="tab-pane" id="wallet_transaction-just" role="tabpanel" aria-labelledby="wallet_transaction-tab-justified">
+                
+                <div class="table-responsive card card-company-table">
+                  <table class="table" id="transactionsTable">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>User</th>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Reason</th>
+                        <th>Description</th>
+                        <th>Balance After</th>
+                        <th>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+
+
             </div>
+
           </div>
         </div>
       </div>
-
     </div>
+
   </div>
 </div>
+</div>
+
+<script>
+  const user = <%- JSON.stringify(user) %>; 
+</script>
+
+<script>
+  $(document).ready(function() {
+    var table = $('#transactionsTable').DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: '/admin/transactions/data',
+        type: 'POST',
+        contentType: 'application/json',
+        data: function(d) {
+           d.userId = user._id;  // user injected from EJS
+          return JSON.stringify(d);
+        }
+      },
+      columns: [{
+          data: null,
+          render: function(data, type, row, meta) {
+            return meta.settings._iDisplayStart + meta.row + 1;
+          },
+          searchable: false
+        },
+        {
+          data: 'user',
+          defaultContent: '-'
+        }, // populated with populate('userId')
+        {
+          data: 'amount'
+        },
+        {
+          data: 'type',
+          render: data => data === 'credit' ?
+            '<span class="badge bg-success">Credit</span>' : '<span class="badge bg-danger">Debit</span>'
+        },
+        {
+          data: 'reason'
+        },
+        {
+          data: 'description'
+        },
+        {
+          data: 'balance_after'
+        },
+        {
+          data: 'createdAt',
+          render: d => new Date(d).toLocaleString()
+        }
+
+      ],
+      drawCallback: function(settings) {
+        feather.replace();
+      }
+    });
+
+  });
+</script>
