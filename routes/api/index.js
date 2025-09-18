@@ -7,7 +7,9 @@ router.use('/auth', require('../api/auth'));
 router.use('/', require('../api/home.js'));
 router.use('/profile', verifyToken, require('../api/profile'));
 router.use('/chat', require('../api/chat'));
-router.use('/rental', require('../api/rental'));
+router.use('/rentals', require('../api/rental'));
+router.use('/cafes', require('../api/cafe'));
+router.use('/guides', require('../api/guide'));
 
 
 

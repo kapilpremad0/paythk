@@ -5,6 +5,7 @@ const Location = require('../../models/Location');
 
 const formatError = (field, message) => ({ [field]: message });
 
+const { languages } = require("../../config/languages");
 
 
 
@@ -68,7 +69,8 @@ exports.generalSettings = async (req, res) => {
         return res.json({
             pause_ride_reason: passengerReasons,
             leave_request_reasons: leaveReasons,
-            terms_url: termsUrl
+            terms_url: termsUrl,
+            languages
         });
     } catch (err) {
         console.error('get general settings:', err.message);

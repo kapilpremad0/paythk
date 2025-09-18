@@ -78,4 +78,30 @@ guideSchema.virtual("action_div").get(function () {
   `;
 });
 
+
+
+guideSchema.virtual("availabilities", {
+  ref: "Availability",
+  localField: "_id",
+  foreignField: "parentId",
+  justOne: false,
+  match: { parentType: "Guide" } // ensure only Rental availability is fetched
+});
+
+guideSchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.action_div;  // remove action_div from response
+    return ret;
+  }
+});
+
+guideSchema.set("toObject", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.action_div;
+    return ret;
+  }
+});
+
 module.exports = mongoose.model("Guide", guideSchema);

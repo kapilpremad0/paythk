@@ -28,6 +28,10 @@ cafeSchema.virtual('imageUrls').get(function () {
   return this.images.map(img => `${baseUrl}/uploads/${img}`);
 });
 
+
+
+
+
 cafeSchema.virtual('profile_url').get(function () {
   // if (!this.profile) return null;
 
@@ -36,7 +40,7 @@ cafeSchema.virtual('profile_url').get(function () {
 
   if (!this.profile) {
     const id = this._id ? this._id.toString().slice(-1) : 1; // last digit for variation
-    
+
 
     const avatarNumber = (id % 5) + 1; // Results in 1 to 5
 
@@ -76,6 +80,32 @@ cafeSchema.virtual("action_div").get(function () {
       </div>
     </div>
   `;
+});
+
+
+
+cafeSchema.virtual("availabilities", {
+  ref: "Availability",
+  localField: "_id",
+  foreignField: "parentId",
+  justOne: false,
+  match: { parentType: "Cafe" } // ensure only Rental availability is fetched
+});
+
+cafeSchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.action_div;  // remove action_div from response
+    return ret;
+  }
+});
+
+cafeSchema.set("toObject", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.action_div;
+    return ret;
+  }
 });
 
 module.exports = mongoose.model("Cafe", cafeSchema);
