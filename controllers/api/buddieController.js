@@ -2,6 +2,7 @@ const express = require('express');
 const User = require('../../models/User');
 const LikeDislike = require('../../models/LikeDislike');
 const Availability = require('../../models/Availability');
+const BuddyRequest = require('../../models/BuddyRequest');
 const router = express.Router();
 
 const formatError = (field, message) => ({ [field]: message });
@@ -79,11 +80,11 @@ exports.likeDislike = async (req, res) => {
         if (!buddyId) {
             Object.assign(errors, formatError('buddyId', 'The buddyId field is required.'));
         }
-        
+
         if (!action) {
             Object.assign(errors, formatError('action', 'The action field is required.'));
-        }else if(!["like", "dislike"].includes(action)) {
-            Object.assign(errors, formatError('action', "Invalid action. Must be 'like' or 'dislike'" ));
+        } else if (!["like", "dislike"].includes(action)) {
+            Object.assign(errors, formatError('action', "Invalid action. Must be 'like' or 'dislike'"));
         }
 
         if (Object.keys(errors).length > 0) {
@@ -110,5 +111,64 @@ exports.likeDislike = async (req, res) => {
 };
 
 
+
+exports.sendRequest = async (req, res) => {
+    try {
+        const errors = {};
+        const senderId = req.user.id;
+        const { buddyId } = req.body || {};
+
+
+
+        if (!buddyId) {
+            Object.assign(errors, formatError('buddyId', 'The buddyId field is required.'));
+        }
+
+
+        if (Object.keys(errors).length > 0) {
+            return res.status(422).json({ message: 'Validation Error', errors });
+        }
+
+        if (senderId === buddyId) {
+            return res.status(400).json({ message: "Cannot send request to yourself" });
+        }
+
+        const request = await BuddyRequest.findOneAndUpdate(
+            { senderId, receiverId: buddyId },
+            { status: "pending", updatedAt: new Date() },
+            { upsert: true, new: true }
+        );
+
+        return res.json({ message: "Request sent", request });
+    } catch (err) {
+        console.error("sendRequest error:", err.message);
+        return res.status(500).json({ message: "Server Error" });
+    }
+};
+
+
+exports.getRequests = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Requests you RECEIVED
+        const received = await BuddyRequest.find({ receiverId: userId })
+            .populate("senderId", "name dob interests imageUrls")
+            .populate("receiverId", "name");
+
+        // Requests you SENT
+        const sent = await BuddyRequest.find({ senderId: userId })
+            .populate("receiverId", "name dob interests imageUrls")
+            .populate("senderId", "name");
+
+        return res.json({
+            sentRequests: sent,
+            receivedRequests: received
+        });
+    } catch (err) {
+        console.error("getPendingRequests error:", err.message);
+        return res.status(500).json({ message: "Server Error" });
+    }
+};
 
 

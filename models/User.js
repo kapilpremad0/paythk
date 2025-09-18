@@ -122,6 +122,9 @@ UserSchema.virtual('profile_url').get(function () {
 
 UserSchema.virtual('imageUrls').get(function () {
   const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+  if (!this.images || !Array.isArray(this.images)) {
+    return []; // return empty array if no images
+  }
   return this.images.map(img => `${baseUrl}/uploads/${img}`);
 });
 
