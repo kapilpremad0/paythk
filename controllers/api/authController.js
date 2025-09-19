@@ -208,8 +208,8 @@ exports.login = async (req, res) => {
             token,
             name: user.name,
             otp_verify: user.otp_verify,
-            mobile:user.mobile,
-            email:user.email
+            mobile: user.mobile,
+            email: user.email
         };
 
         return res.json(response);
@@ -226,35 +226,39 @@ exports.login = async (req, res) => {
 
 exports.forgotPassword = async (req, res) => {
     try {
-        const { mobile, type } = req.body || {};
+        const { username, type } = req.body || {};
         const errors = {};
 
-        if (!mobile) {
-            Object.assign(errors, formatError('mobile', 'The mobile field is required.'));
-        } else if (!/^\d{10}$/.test(mobile)) {
-            Object.assign(errors, formatError('mobile', 'The mobile must be a valid 10-digit number.'));
-        }
+        // ✅ Validate username
+        if (!username) {
+            Object.assign(errors, formatError('username', 'The username field is required.'));
+        } else {
+            const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
+            const isMobile = /^\d{10}$/.test(username);
 
-        if (!type)
-            Object.assign(errors, formatError('type', 'The type field is required.'));
-        else if (!type.trim()) Object.assign(errors, formatError('type', 'The type field is required.'));
-        else if (!allowedTypes.includes(type.toLowerCase())) {
-            Object.assign(errors, formatError('type', `The type must be one of: ${allowedTypes.join(', ')}`));
+            if (!isEmail && !isMobile) {
+                Object.assign(errors, formatError('username', 'The username must be a valid email or 10-digit mobile number.'));
+            }
         }
-
 
         if (Object.keys(errors).length > 0) {
             return res.status(422).json({ message: 'Validation Error', errors });
         }
 
-        const user = await User.findOne({ mobile, user_type: type });
+        // ✅ Find user by email OR mobile
+        const query = /^\d{10}$/.test(username)
+            ? { mobile: username }
+            : { email: username };
+
+        const user = await User.findOne(query);
         if (!user) {
             return res.status(422).json({
                 message: 'Validation Error',
-                errors: formatError('mobile', `No ${type} account is registered with the mobile number ${mobile}.`)
+                errors: formatError('username', `No account is registered with ${username}.`)
             });
         }
 
+        // ✅ Generate OTP
         const otp = generateOTP(6);
         const otpExpiry = Date.now() + 5 * 60 * 1000; // 5 min from now
 
@@ -263,24 +267,29 @@ exports.forgotPassword = async (req, res) => {
         user.otpExpiry = otpExpiry;
         await user.save();
 
-        // Send OTP via SMS (pseudo-code)
-        // await sendSMS(mobile, otp);
+        // ✅ Send OTP depending on type (email or SMS)
+        if (/^\d{10}$/.test(username)) {
+            // Send via SMS
+            // await sendSMS(user.mobile, otp);
+        } else {
+            // Send via Email
+            // await sendEmail(user.email, `Your OTP is ${otp}`);
+        }
 
         return res.json({
             message: 'OTP sent successfully.',
             success: true
         });
 
-
-
     } catch (err) {
-        console.error('Login Error:', err.message);
+        console.error('ForgotPassword Error:', err.message);
         return res.status(500).json({
             message: 'Server Error',
             success: false
         });
     }
-}
+};
+
 
 
 exports.verifyOtp = async (req, res) => {
