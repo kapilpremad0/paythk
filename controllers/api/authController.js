@@ -153,32 +153,44 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { mobile, password, type } = req.body || {};
+        const { username, password } = req.body || {};
         const errors = {};
 
-        if (!mobile) {
-            Object.assign(errors, formatError('mobile', 'The mobile field is required.'));
-        } else if (!/^\d{10}$/.test(mobile)) {
-            Object.assign(errors, formatError('mobile', 'The mobile must be a valid 10-digit number.'));
+        // ✅ Validate username
+        if (!username) {
+            Object.assign(errors, formatError('username', 'The username field is required.'));
+        } else {
+            const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
+            const isMobile = /^\d{10}$/.test(username);
+
+            if (!isEmail && !isMobile) {
+                Object.assign(errors, formatError('username', 'The username must be a valid email or 10-digit mobile number.'));
+            }
         }
 
+        // ✅ Validate password
         if (!password) {
             Object.assign(errors, formatError('password', 'The password field is required.'));
         }
-       
 
         if (Object.keys(errors).length > 0) {
             return res.status(422).json({ message: 'Validation Error', errors });
         }
 
-        const user = await User.findOne({ mobile});
+        // ✅ Find user by email OR mobile
+        const query = /^\d{10}$/.test(username)
+            ? { mobile: username }
+            : { email: username };
+
+        const user = await User.findOne(query);
         if (!user) {
             return res.status(422).json({
                 message: 'Validation Error',
-                errors: formatError('mobile', `No account is registered with the mobile number ${mobile}.`)
+                errors: formatError('username', `No account is registered with ${username}.`)
             });
         }
 
+        // ✅ Check password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(422).json({
@@ -187,7 +199,7 @@ exports.login = async (req, res) => {
             });
         }
 
-
+        // ✅ Generate JWT token
         const payload = { user: { id: user.id } };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
 
@@ -195,7 +207,9 @@ exports.login = async (req, res) => {
             message: 'Login successful',
             token,
             name: user.name,
-            otp_verify: user.otp_verify
+            otp_verify: user.otp_verify,
+            mobile:user.mobile,
+            email:user.email
         };
 
         return res.json(response);
@@ -207,6 +221,7 @@ exports.login = async (req, res) => {
         });
     }
 };
+
 
 
 exports.forgotPassword = async (req, res) => {
