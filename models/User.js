@@ -58,6 +58,16 @@ const UserSchema = new mongoose.Schema({
   },
   wallet_balance: { type: Number, default: 0 },
   images: [{ type: String }],
+
+  businessType: {
+    type: String,
+    enum: ["Rental", "Hostel", "Cafe", "Guide"],
+    required: false,
+    default: null
+  },
+  homeAddress: { type: String, default: null },
+  businessDetail: { type: String, default: null },
+
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
