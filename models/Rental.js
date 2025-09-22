@@ -16,7 +16,12 @@ const rentalSchema = new mongoose.Schema({
   contactNumber: { type: String },
   email: { type: String },
   website: { type: String },
-  
+  partner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",   // <-- Name of your Location model
+    required: true
+  },
+
 }, { timestamps: true });
 
 rentalSchema.virtual("availabilities", {

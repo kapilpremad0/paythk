@@ -3,6 +3,7 @@ const Location = require('../../models/Location'); // Rental model
 const Availability = require('../../models/Availability'); // Rental model
 const path = require('path');
 const fs = require('fs');
+const User = require('../../models/User');
 
 exports.getList = async (req, res) => {
   try {
@@ -15,7 +16,9 @@ exports.getList = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const locations = await Location.find();
-    res.render('admin/rentals/create', { title: "Create Rental", availabilities: null, rental: null, locations });
+    const partners = await User.find({ user_type: "partner", businessType: "Rental" });
+    
+    res.render('admin/rentals/create', { title: "Create Rental", availabilities: null, rental: null, locations ,partners });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -33,8 +36,10 @@ exports.edit = async (req, res) => {
       parentType: "Rental"
     }).lean();
 
+    const partners = await User.find({ user_type: "partner", businessType: "Rental" });
 
-    res.render('admin/rentals/create', { title: "Edit Rental", availabilities: availabilities, rental, locations });
+
+    res.render('admin/rentals/create', { title: "Edit Rental", availabilities: availabilities, rental, locations ,partners});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -93,10 +98,25 @@ exports.getData = async (req, res) => {
       .skip(start)
       .limit(length)
       .populate("location", "city state")
+      .populate("partner") // populate partner fields
       .exec();
 
     const data = data_fetch.map((Rental, index) => ({
       serial: start + index + 1,
+      partner_div : `
+    <div class="d-flex align-items-center">
+      <div class="avatar rounded">
+        <div class="avatar-content">
+          <img src="${Rental.partner.profile_url}" width="50" height="50" alt="Toolbar svg" />
+        </div>
+      </div>
+      <div>
+        <div class="fw-bolder"><a href="/admin/partners/${Rental.partner._id}">${Rental.partner.name}</a></div>
+        <div class="font-small-2 text-muted">${Rental.partner.email}</div>
+        <div class="font-small-2 text-muted">${Rental.partner.mobile}</div>
+      </div>
+    </div>
+  `,
       name: Rental.name,
       type: Rental.type,
       city: Rental.location.city ?? '',
@@ -122,13 +142,14 @@ exports.storeData = async (req, res) => {
       contactPerson,
       contactNumber,
       email,
-      website
+      website ,partner
 
       = [] } = req.body;
 
     // Basic validation
     const errors = {};
     if (!name) errors.name = "Rental name is required";
+    if (!partner) errors.partner = "Rental partner is required";
     if (!location) errors.location = "Location is required";
     if (!address) errors.address = "Address is required";
 
@@ -143,7 +164,7 @@ exports.storeData = async (req, res) => {
       name, location, address, terms, description, images, contactPerson,
       contactNumber,
       email,
-      website
+      website ,partner
     });
 
     // 2️⃣ Create Availability (if provided)
@@ -183,11 +204,13 @@ exports.updateData = async (req, res) => {
     const { name, location, address, terms, description, availability, contactPerson,
       contactNumber,
       email,
+      partner,
       website = [] } = req.body;
 
     // Basic validation
     const errors = {};
     if (!name) errors.name = "Rental name is required";
+    if (!partner) errors.partner = "Rental partner is required";
     if (!location) errors.location = "Location is required";
     if (!address) errors.address = "Address is required";
 
@@ -207,6 +230,7 @@ exports.updateData = async (req, res) => {
     rental.address = address;
     rental.terms = terms;
     rental.description = description;
+    rental.partner = partner;
 
     await rental.save();
 

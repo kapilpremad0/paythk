@@ -125,7 +125,7 @@ exports.getData = async (req, res) => {
       type: hostel.type,
       city: hostel.location.city,
       state: hostel.location.state,
-      address:hostel.address,
+      address: hostel.address,
       action: hostel.action_div,
     }));
 
