@@ -31,11 +31,11 @@
                   <thead>
                     <tr>
                       <th>#</th>
-                      <th>Name</th>
-                      <th>Type</th>
+                      <th>Partner</th>
+                      <th>Hostel Name</th>
                       <th>City</th>
                       <th>State</th>
-                      <th>Monthly Fee</th>
+                      <th>Address</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -94,11 +94,11 @@
           },
           searchable: false
         },
+        { data: 'partner_div' },
         { data: 'name' },
-        { data: 'type', render: data => data ? data.toUpperCase() : '' },
         { data: 'city', render: data => data ? data.toUpperCase() : '' },
         { data: 'state', render: data => data ? data.toUpperCase() : '' },
-        { data: 'monthlyFee', render: data => data ? `$${data}` : '' },
+        { data: 'address', render: data => data ? `${data}` : '' },
         { data: 'action' }
       ],
       drawCallback: function(settings) {

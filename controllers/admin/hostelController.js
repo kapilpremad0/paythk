@@ -102,17 +102,30 @@ exports.getData = async (req, res) => {
       .skip(start)
       .limit(length)
       .populate("location", "city state")
+      .populate("partner") // populate partner fields
       .exec();
 
     const data = data_fetch.map((hostel, index) => ({
       serial: start + index + 1,
+      partner_div : `
+    <div class="d-flex align-items-center">
+      <div class="avatar rounded">
+        <div class="avatar-content">
+          <img src="${hostel.partner.profile_url}" width="50" height="50" alt="Toolbar svg" />
+        </div>
+      </div>
+      <div>
+        <div class="fw-bolder"><a href="/admin/partners/${hostel.partner._id}">${hostel.partner.name}</a></div>
+        <div class="font-small-2 text-muted">${hostel.partner.email}</div>
+        <div class="font-small-2 text-muted">${hostel.partner.mobile}</div>
+      </div>
+    </div>
+  `,
       name: hostel.name,
       type: hostel.type,
       city: hostel.location.city,
       state: hostel.location.state,
-      contactPerson: hostel.contactPerson,
-      contactNumber: hostel.contactNumber,
-      monthlyFee: hostel.monthlyFee,
+      address:hostel.address,
       action: hostel.action_div,
     }));
 
