@@ -42,7 +42,7 @@
 
   <link rel="stylesheet" type="text/css" href="/admin/app-assets/vendors/css/forms/select/select2.min.css">
 
-  
+
   <!-- END: Page CSS-->
 
   <!-- BEGIN: Custom CSS-->
@@ -120,10 +120,20 @@
             <a class="dropdown-item" href="page-account-settings-account.html"><i class="me-50" data-feather="settings"></i>
               Settings</a> -->
 
+            <% if (userRole == 'admin') { %>
             <a class="dropdown-item" href="<%= '/admin/logout' %>"><i class="me-50" data-feather="power"></i> Logout</a>
-          </div>
-        </li>
-      </ul>
+
+            <% } else if (userRole == 'partner') { %>
+
+             <a class="dropdown-item" href="<%= '/panel/logout' %>"><i class="me-50" data-feather="power"></i> Logout</a>
+
+
+            <% } %>
+
+
+    </div>
+    </li>
+    </ul>
     </div>
   </nav>
 

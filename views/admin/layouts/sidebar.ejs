@@ -1,7 +1,14 @@
 <div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">
   <div class="navbar-header">
     <ul class="nav navbar-nav flex-row">
-      <li class="nav-item me-auto"><a class="navbar-brand" href="<%= '/admin' %>">
+      <li class="nav-item me-auto"><a class="navbar-brand" <% if (userRole == 'admin') { %> href="<%= '/admin/' %>">
+
+          <% } else if (userRole == 'partner') { %>
+          href="<%= '/panel/' %>">
+          <% } %>
+
+
+
           <span class="brand-logo">
 
           </span>
@@ -14,6 +21,9 @@
   <div class="shadow-bottom"></div>
   <div class="main-menu-content">
     <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
+
+
+      <% if (userRole == 'admin') { %>
 
       <li class="nav-item <%= currentRoute == '/admin/' ? 'active' : '' %>">
         <a class="d-flex align-items-center" href="/admin">
@@ -72,7 +82,7 @@
         </a>
       </li>
 
-       <li class="nav-item <%= currentRoute.startsWith('/admin/plans') ? 'active' : '' %>">
+      <li class="nav-item <%= currentRoute.startsWith('/admin/plans') ? 'active' : '' %>">
         <a class="d-flex align-items-center" href="/admin/plans">
           <i data-feather="refresh-cw"></i>
           <span class="menu-title text-truncate" data-i18n="Cafe">Subscriptions</span>
@@ -92,6 +102,19 @@
           <span class="menu-title text-truncate" data-i18n="Setting">Settings</span>
         </a>
       </li>
+
+
+      <% } else if (userRole == 'partner') { %>
+
+      <li class="nav-item <%= currentRoute == '/panel/' ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/panel/">
+          <i data-feather="home"></i>
+          <span class="menu-title text-truncate" data-i18n="Dashboard">Dashboard</span>
+        </a>
+      </li>
+
+
+      <% } %>
 
     </ul>
   </div>

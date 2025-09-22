@@ -77,13 +77,27 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // Current route middleware
 app.use((req, res, next) => {
+  
   res.locals.currentRoute = req.path;
+
+  res.locals.userRole = null; // not logged in
+
+  if (req.session.admin) {
+    
+    res.locals.userRole = req.session.admin.role;
+  }
+  if (req.session.panel) {
+    
+    res.locals.userRole = req.session.panel.role;
+  }
+
   next();
 });
 
 // Routes
 app.use('/admin', require('./routes/admin/index.js'));
 app.use('/api', require('./routes/api/index.js'));
+app.use('/panel', require('./routes/panel/index.js'));
 
 
 // app.use('/api/auth', require('./routes/auth'));
