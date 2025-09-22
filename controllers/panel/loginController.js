@@ -7,6 +7,10 @@ exports.showLoginPage = (req, res) => {
     res.render('panel/login', { error: null, layout: false });
 };
 
+exports.showRegisterPage = (req, res) => {
+    res.render('panel/register', { error: null, layout: false });
+};
+
 // Handle login form submission
 exports.login = async (req, res) => {
     const { email, password } = req.body;
