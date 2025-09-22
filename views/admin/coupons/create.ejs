@@ -1,0 +1,189 @@
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-header row"></div>
+    <div class="content-body">
+
+      <div class="col-xl-12 col-lg-12">
+        <form id="submitForm" method="post">
+          <!-- hidden field for edit mode -->
+          <input type="hidden" id="coupon_id" name="coupon_id" value="<%= coupon ? coupon._id : '' %>">
+
+          <div class="card">
+            <div class="card-header">
+              <h3><%= coupon ? 'Edit Coupon' : 'Create Coupon' %></h3>
+            </div>
+            <div class="card-body">
+              <div class="row">
+
+                <!-- Coupon Code -->
+                <div class="mb-1 col-md-6">
+                  <label for="code">Coupon Code</label>
+                  <input type="text" class="form-control" id="code" name="code"
+                         value="<%= coupon ? coupon.code : '' %>"
+                         placeholder="Enter unique coupon code"  />
+                  <div id="code-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Coupon Discount Type -->
+                <div class="mb-1 col-md-6">
+                  <label for="type">Discount Type</label>
+                  <select class="form-select select2" id="type" name="type" >
+                    <option value="">-- Select Type --</option>
+                    <option value="flat" <%= coupon && coupon.type === "flat" ? "selected" : "" %>>Flat</option>
+                    <option value="percentage" <%= coupon && coupon.type === "percentage" ? "selected" : "" %>>Percentage</option>
+                  </select>
+                  <div id="type-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Discount Value -->
+                <div class="mb-1 col-md-6">
+                  <label for="discountValue">Discount Value</label>
+                  <input type="number" class="form-control" id="discountValue" name="discountValue"
+                         value="<%= coupon ? coupon.discountValue : '' %>"
+                         placeholder="Enter discount value"  />
+                  <div id="discountValue-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Max Discount -->
+                <div class="mb-1 col-md-6">
+                  <label for="maxDiscount">Max Discount</label>
+                  <input type="number" class="form-control" id="maxDiscount" name="maxDiscount"
+                         value="<%= coupon ? coupon.maxDiscount : '' %>"
+                         placeholder="Enter max discount (0 = unlimited)" />
+                  <div id="maxDiscount-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Minimum Purchase -->
+                <div class="mb-1 col-md-6">
+                  <label for="minPurchase">Minimum Purchase</label>
+                  <input type="number" class="form-control" id="minPurchase" name="minPurchase"
+                         value="<%= coupon ? coupon.minPurchase : '' %>"
+                         placeholder="Enter minimum purchase amount" />
+                  <div id="minPurchase-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Usage Limit -->
+                <div class="mb-1 col-md-6">
+                  <label for="usageLimit">Usage Limit</label>
+                  <input type="number" class="form-control" id="usageLimit" name="usageLimit"
+                         value="<%= coupon ? coupon.usageLimit : '' %>"
+                         placeholder="Total times coupon can be used" />
+                  <div id="usageLimit-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Per User Limit -->
+                <div class="mb-1 col-md-6">
+                  <label for="perUserLimit">Per User Limit</label>
+                  <input type="number" class="form-control" id="perUserLimit" name="perUserLimit"
+                         value="<%= coupon ? coupon.perUserLimit : '' %>"
+                         placeholder="Times coupon can be used per user" />
+                  <div id="perUserLimit-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Valid From -->
+                <div class="mb-1 col-md-6">
+                  <label for="validFrom">Valid From</label>
+                  <input type="date" class="form-control" id="validFrom" name="validFrom"
+                         value="<%= coupon ? coupon.validFrom.toISOString().split('T')[0] : '' %>" />
+                  <div id="validFrom-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Valid To -->
+                <div class="mb-1 col-md-6">
+                  <label for="validTo">Valid To</label>
+                  <input type="date" class="form-control" id="validTo" name="validTo"
+                         value="<%= coupon ? coupon.validTo.toISOString().split('T')[0] : '' %>"  />
+                  <div id="validTo-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Coupon For -->
+                <div class="mb-1 col-md-6">
+                  <label for="couponFor">Coupon For</label>
+                  <select class="form-select" id="couponFor" name="couponFor" >
+                    <option value="">-- Select Coupon For --</option>
+                    <option value="Rental" <%= coupon && coupon.couponFor === "Rental" ? "selected" : "" %>>Rental</option>
+                    <option value="Hostel" <%= coupon && coupon.couponFor === "Hostel" ? "selected" : "" %>>Hostel</option>
+                    <option value="Cafe" <%= coupon && coupon.couponFor === "Cafe" ? "selected" : "" %>>Cafe</option>
+                    <option value="Guide" <%= coupon && coupon.couponFor === "Guide" ? "selected" : "" %>>Guide</option>
+                  </select>
+                  <div id="couponFor-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Status -->
+                <div class="mb-1 col-md-6">
+                  <label for="isActive">Status</label>
+                  <select class="form-select" id="isActive" name="isActive">
+                    <option value="true" <%= coupon && coupon.isActive ? "selected" : "" %>>Active</option>
+                    <option value="false" <%= coupon && !coupon.isActive ? "selected" : "" %>>Inactive</option>
+                  </select>
+                </div>
+
+                <!-- Submit -->
+                <div class="mb-2">
+                  <button type="submit" class="btn btn-primary mt-3">
+                    <%= coupon ? 'Update Coupon' : 'Save Coupon' %>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $('#submitForm').on('submit', function (e) {
+      e.preventDefault();
+      $('.validation-error').text('');
+
+      const formData = new FormData(this);
+      const couponId = $('#coupon_id').val();
+
+      let url = '/admin/coupons';
+      let method = 'POST';
+
+      if (couponId) { // edit mode
+        url = '/admin/coupons/' + couponId;
+        method = 'PUT';
+      }
+
+      $('#form-loader').show();
+
+      $.ajax({
+        url: url,
+        method: method,
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          $('#form-loader').hide();
+          window.location.href = '/admin/coupons'; // redirect after save
+        },
+        error: function (res) {
+          $('#form-loader').hide();
+          if (res.status == 400 || res.status == 422) {
+            if (res.responseJSON && res.responseJSON.errors) {
+              var error = res.responseJSON.errors;
+              $.each(error, function (key, value) {
+                $("#" + key + "-submit_errors").text(value);
+              });
+            }
+          }
+          if (res.status == 500) {
+            showErrorToast(res.responseJSON.error);
+          }
+          if (res.status == 404) {
+            showErrorToast('Something went wrong');
+          }
+        }
+      });
+    });
+  });
+</script>
