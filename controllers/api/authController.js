@@ -21,7 +21,7 @@ function generateOTP(length = 4) {
 
 exports.register = async (req, res) => {
     try {
-        const { name, mobile, password, type, email, referral_code } = req.body || {};
+        const { name, mobile, password, type, email, referral_code, fcm_token } = req.body || {};
         const errors = {};
 
         if (!name) {
@@ -123,6 +123,10 @@ exports.register = async (req, res) => {
             }
         }
 
+        if (fcm_token) {
+            newUser.fcm_token = fcm_token;
+        }
+
         await newUser.save();
 
         const otp = generateOTP(6);
@@ -153,7 +157,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { username, password } = req.body || {};
+        const { username, password ,fcm_token } = req.body || {};
         const errors = {};
 
         // ✅ Validate username
@@ -188,6 +192,11 @@ exports.login = async (req, res) => {
                 message: 'Validation Error',
                 errors: formatError('username', `No account is registered with ${username}.`)
             });
+        }
+
+        if (fcm_token) {
+            user.fcm_token = fcm_token;
+            await user.save();
         }
 
         // ✅ Check password
