@@ -13,5 +13,6 @@ router.use('/cafes', require('./cafeRoutes.js'));
 router.use('/settings', require('./settingRoutes.js'));
 router.use('/transactions', require('./transactionRoutes.js'));
 router.use('/plans', require('./planRoutes.js'));
+router.use('/coupons', require('./couponRoutes.js'));
 
 module.exports = router;

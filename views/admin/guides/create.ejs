@@ -25,6 +25,20 @@
                 </div>
 
                 <div class="mb-1 col-md-6">
+                  <label for="partner">Select Partner</label>
+                  <select name="partner" class="form-select select2">
+                    <option value="">-- Select partner --</option>
+                    <% partners.forEach(loc => { %>
+                    <option value="<%= loc._id %>" <%= guide && guide.partner && guide.partner.toString() === loc._id.toString() ? 'selected' : '' %>>
+
+                      <%= loc.name %>,
+                      <%= loc.mobile %></option>
+                    <% }) %>
+                  </select>
+                  <div id="partner-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
                   <label for="profile">Profile Image</label>
                   <input type="file" class="form-control" id="profile" name="profile" />
                   <% if (guide && guide.profile_url) { %>

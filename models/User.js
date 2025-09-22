@@ -67,6 +67,7 @@ const UserSchema = new mongoose.Schema({
   },
   homeAddress: { type: String, default: null },
   businessDetail: { type: String, default: null },
+  fcm_token: { type: String, default: "" }, // FCM Token
 
 }, {
   timestamps: true,
