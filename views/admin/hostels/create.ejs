@@ -24,110 +24,40 @@
                   <div id="name-submit_errors" class="validation-error"></div>
                 </div>
 
-                <div class="mb-1 col-md-6">
-                  <label for="type">Hostel Type</label>
-                  <select class="form-control" id="type" name="type">
-                    <option value="">Select type</option>
-                    <option value="Boys" <%= hostel && hostel.type === 'Boys' ? 'selected' : '' %>>Boys</option>
-                    <option value="Girls" <%= hostel && hostel.type === 'Girls' ? 'selected' : '' %>>Girls</option>
-                    <option value="Mixed" <%= hostel && hostel.type === 'Mixed' ? 'selected' : '' %>>Mixed</option>
-                  </select>
-                  <div id="type-submit_errors" class="validation-error"></div>
-                </div>
 
-                <div class="mb-1 col-md-6">
-                  <label for="address">Address</label>
-                  <textarea class="form-control" id="address" name="address" placeholder="Enter hostel address"><%= hostel ? hostel.address : '' %></textarea>
-                  <div id="address-submit_errors" class="validation-error"></div>
-                </div>
 
-                <!-- <div class="mb-1 col-md-6">
-                  <label for="city">City</label>
-                  <input type="text" class="form-control" id="city" name="city" value="<%= hostel ? hostel.city : '' %>" placeholder="Enter city" />
-                  <div id="city-submit_errors" class="validation-error"></div>
-                </div> -->
-
-                <!-- <div class="mb-1 col-md-6">
-                  <label for="state">State</label>
-                  <input type="text" class="form-control" id="state" name="state" value="<%= hostel ? hostel.state : '' %>" placeholder="Enter state" />
-                  <div id="state-submit_errors" class="validation-error"></div>
-                </div> -->
 
                 <div class="mb-1 col-md-6">
                   <label for="location">Select Location</label>
                   <select name="location" class="form-select select2">
                     <option value="">-- Select Location --</option>
                     <% locations.forEach(loc => { %>
-                    <option value="<%= loc._id %>"
-                       <%= hostel && hostel.location && hostel.location.toString() === loc._id.toString() ? 'selected' : '' %>
-                      >
+                    <option value="<%= loc._id %>" <%= hostel && hostel.location && hostel.location.toString() === loc._id.toString() ? 'selected' : '' %>>
 
-                      <%= loc.city %>, 
+                      <%= loc.city %>,
                       <%= loc.state %></option>
                     <% }) %>
                   </select>
                   <div id="location-submit_errors" class="validation-error"></div>
                 </div>
 
-                <!-- <div class="mb-1 col-md-6">
-                  <label for="country">Country</label>
-                  <input type="text" class="form-control" id="country" name="country" value="<%= hostel ? hostel.country : 'India' %>" placeholder="Enter country" />
-                  <div id="country-submit_errors" class="validation-error"></div>
-                </div> -->
-
                 <div class="mb-1 col-md-6">
-                  <label for="pinCode">Pin Code</label>
-                  <input type="text" class="form-control" id="pinCode" name="pinCode" value="<%= hostel ? hostel.pinCode : '' %>" placeholder="Enter pin code" />
-                  <div id="pinCode-submit_errors" class="validation-error"></div>
+                  <label for="partner">Select Partner</label>
+                  <select name="partner" class="form-select select2">
+                    <option value="">-- Select partner --</option>
+                    <% partners.forEach(loc => { %>
+                    <option value="<%= loc._id %>" <%= hostel && hostel.partner && hostel.partner.toString() === loc._id.toString() ? 'selected' : '' %>>
+
+                      <%= loc.name %>,
+                      <%= loc.mobile %></option>
+                    <% }) %>
+                  </select>
+                  <div id="partner-submit_errors" class="validation-error"></div>
                 </div>
 
-                <!-- Facilities -->
-                <div class="mb-1 col-md-6">
-                  <label for="totalRooms">Total Rooms</label>
-                  <input type="number" class="form-control" id="totalRooms" name="totalRooms" value="<%= hostel ? hostel.totalRooms : '' %>" placeholder="Enter total rooms" />
-                  <div id="totalRooms-submit_errors" class="validation-error"></div>
-                </div>
 
-                <div class="mb-1 col-md-6">
-                  <label for="occupancyPerRoom">Occupancy per Room</label>
-                  <input type="number" class="form-control" id="occupancyPerRoom" name="occupancyPerRoom" value="<%= hostel ? hostel.occupancyPerRoom : '' %>" placeholder="Enter occupancy per room" />
-                  <div id="occupancyPerRoom-submit_errors" class="validation-error"></div>
-                </div>
 
-                <div class="mb-1 col-md-3">
-                  <div class="form-check mt-4">
-                    <input type="checkbox" class="form-check-input" id="foodFacility" name="foodFacility" value="true" <%= hostel && hostel.foodFacility ? 'checked' : '' %>>
-                    <label for="foodFacility" class="form-check-label">Food Facility</label>
-                  </div>
-                </div>
 
-                <div class="mb-1 col-md-3">
-                  <div class="form-check mt-4">
-                    <input type="checkbox" class="form-check-input" id="laundryService" name="laundryService" value="true" <%= hostel && hostel.laundryService ? 'checked' : '' %>>
-                    <label for="laundryService" class="form-check-label">Laundry Service</label>
-                  </div>
-                </div>
-
-                <div class="mb-1 col-md-3">
-                  <div class="form-check mt-4">
-                    <input type="checkbox" class="form-check-input" id="wifi" name="wifi" value="true" <%= hostel && hostel.wifi ? 'checked' : '' %>>
-                    <label for="wifi" class="form-check-label">WiFi</label>
-                  </div>
-                </div>
-
-                <div class="mb-1 col-md-3">
-                  <div class="form-check mt-4">
-                    <input type="checkbox" class="form-check-input" id="security" name="security" value="true" <%= hostel && hostel.security ? 'checked' : '' %>>
-                    <label for="security" class="form-check-label">Security</label>
-                  </div>
-                </div>
-
-                <div class="mb-1 col-md-3">
-                  <div class="form-check mt-4">
-                    <input type="checkbox" class="form-check-input" id="parking" name="parking" value="true" <%= hostel && hostel.parking ? 'checked' : '' %>>
-                    <label for="parking" class="form-check-label">Parking</label>
-                  </div>
-                </div>
 
                 <!-- Contact -->
                 <div class="mb-1 col-md-6">
@@ -152,30 +82,6 @@
                   <label for="website">Website</label>
                   <input type="text" class="form-control" id="website" name="website" value="<%= hostel ? hostel.website : '' %>" placeholder="Enter website URL" />
                   <div id="website-submit_errors" class="validation-error"></div>
-                </div>
-
-                <!-- Financial Details -->
-                <div class="mb-1 col-md-6">
-                  <label for="monthlyFee">Monthly Fee</label>
-                  <input type="number" class="form-control" id="monthlyFee" name="monthlyFee" value="<%= hostel ? hostel.monthlyFee : '' %>" placeholder="Enter monthly fee" />
-                  <div id="monthlyFee-submit_errors" class="validation-error"></div>
-                </div>
-
-                <div class="mb-1 col-md-6">
-                  <label for="depositAmount">Deposit Amount</label>
-                  <input type="number" class="form-control" id="depositAmount" name="depositAmount" value="<%= hostel ? hostel.depositAmount : '' %>" placeholder="Enter deposit amount" />
-                  <div id="depositAmount-submit_errors" class="validation-error"></div>
-                </div>
-
-                <div class="mb-1 col-md-6">
-                  <label for="paymentMode">Payment Mode</label>
-                  <select class="form-control" id="paymentMode" name="paymentMode">
-                    <option value="">Select payment mode</option>
-                    <option value="Cash" <%= hostel && hostel.paymentMode === 'Cash' ? 'selected' : '' %>>Cash</option>
-                    <option value="Bank" <%= hostel && hostel.paymentMode === 'Bank' ? 'selected' : '' %>>Bank</option>
-                    <option value="Online" <%= hostel && hostel.paymentMode === 'Online' ? 'selected' : '' %>>Online</option>
-                  </select>
-                  <div id="paymentMode-submit_errors" class="validation-error"></div>
                 </div>
 
                 <!-- Files -->
@@ -212,6 +118,96 @@
                   <div id="additionalNotes-submit_errors" class="validation-error"></div>
                 </div>
 
+                <div class="mb-1 col-md-12">
+                  <label for="address">Address</label>
+                  <textarea class="form-control" id="address" name="address" placeholder="Enter hostel address"><%= hostel ? hostel.address : '' %></textarea>
+                  <div id="address-submit_errors" class="validation-error"></div>
+                </div>
+
+
+                <table class="table table-bordered mb-2" id="availability-table">
+                  <thead>
+                    <tr>
+                      <th>Day</th>
+                      <th>Status</th>
+                      <th>Open Time</th>
+                      <th>Close Time</th>
+                      <!-- <th>Price</th> -->
+                      <!-- <th>Late Fees</th> -->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].forEach((day, i) => { 
+        let av = availabilities ? availabilities.find(a => a.day === day) : null; 
+    %>
+                    <tr>
+                      <td>
+                        <%= day %>
+                        <input type="hidden" name="availability[<%= i %>][day]" value="<%= day %>" />
+                      </td>
+                      <td>
+                        <div class="form-check form-check-primary form-switch">
+                          <input type="checkbox" name="availability[<%= i %>][status]" class="form-check-input" value="active" <%= av && av.status === 'active' ? 'checked' : '' %>>
+                        </div>
+                      </td>
+                      <td>
+                        <input type="time" class="form-control" name="availability[<%= i %>][open_time]" value="<%= av ? av.open_time : '' %>" />
+                      </td>
+                      <td>
+                        <input type="time" class="form-control" name="availability[<%= i %>][close_time]" value="<%= av ? av.close_time : '' %>" />
+                      </td>
+                      <!-- <td>
+                        <input type="number" class="form-control" name="availability[<%= i %>][price]" value="<%= av ? av.price : '' %>" />
+                      </td>
+                      <td>
+                        <input type="number" class="form-control" name="availability[<%= i %>][late_fees]" value="<%= av ? av.late_fees : '' %>" />
+                      </td> -->
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+
+
+                <div class="card mb-3">
+                  <div class="card-header">
+                    <h4>Room Types</h4>
+                    <button type="button" class="btn btn-sm btn-success float-end" id="addRoomTypeBtn">Add Room Type</button>
+                  </div>
+                  <div class="card-body">
+                    <div id="roomTypesContainer">
+                      <% if (hostel && hostel.roomTypes && hostel.roomTypes.length > 0) { %>
+                      <% hostel.roomTypes.forEach((room, index) => { %>
+                      <div class="room-type-row mb-2 border p-2 position-relative">
+                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 removeRoomType">X</button>
+                        <div class="row">
+                          <div class="col-md-3">
+                            <label>Room Type</label>
+                            <input type="text" name="roomTypes[<%= index %>][name]" class="form-control" value="<%= room.name %>" placeholder="Single/Double/Suite">
+                          </div>
+                          <div class="col-md-3">
+                            <label>Price per Night</label>
+                            <input type="number" name="roomTypes[<%= index %>][price]" class="form-control" value="<%= room.price %>" placeholder="Enter price">
+                          </div>
+                          <div class="col-md-3">
+                            <label>No. of Beds</label>
+                            <input type="number" name="roomTypes[<%= index %>][beds]" class="form-control" value="<%= room.beds %>" placeholder="Beds">
+                          </div>
+                          <div class="col-md-3">
+                            <label>Max Members Allowed</label>
+                            <input type="number" name="roomTypes[<%= index %>][maxMembers]" class="form-control" value="<%= room.maxMembers %>" placeholder="Max members">
+                          </div>
+                        </div>
+                      </div>
+                      <% }) %>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+
               </div>
 
               <!-- Submit -->
@@ -243,7 +239,7 @@
         url = '/admin/hostels/' + hostelId;
         method = 'PUT';
       }
-       $('#form-loader').show();
+      $('#form-loader').show();
 
       $.ajax({
         url: url,
@@ -252,11 +248,11 @@
         processData: false,
         contentType: false,
         success: function(response) {
-           $('#form-loader').hide();
+          $('#form-loader').hide();
           window.location.href = '/admin/hostels'; // redirect after save
         },
         error: function(res) {
-           $('#form-loader').hide();
+          $('#form-loader').hide();
           if (res.status == 400 || res.status == 422) {
             if (res.responseJSON && res.responseJSON.errors) {
               var error = res.responseJSON.errors;
@@ -274,5 +270,47 @@
         }
       });
     });
+  });
+</script>
+
+
+<script>
+  let roomIndex = <%= hostel && hostel.roomTypes ? hostel.roomTypes.length : 0 %>;
+
+  document.getElementById("addRoomTypeBtn").addEventListener("click", function() {
+    const container = document.getElementById("roomTypesContainer");
+
+    const row = document.createElement("div");
+    row.classList.add("room-type-row", "mb-2", "border", "p-2", "position-relative");
+    row.innerHTML = `
+    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 removeRoomType">X</button>
+    <div class="row">
+      <div class="col-md-3">
+        <label>Room Type</label>
+        <input type="text" name="roomTypes[${roomIndex}][name]" class="form-control" placeholder="Single/Double/Suite">
+      </div>
+      <div class="col-md-3">
+        <label>Price per Night</label>
+        <input type="number" name="roomTypes[${roomIndex}][price]" class="form-control" placeholder="Enter price">
+      </div>
+      <div class="col-md-3">
+        <label>No. of Beds</label>
+        <input type="number" name="roomTypes[${roomIndex}][beds]" class="form-control" placeholder="Beds">
+      </div>
+      <div class="col-md-3">
+        <label>Max Members Allowed</label>
+        <input type="number" name="roomTypes[${roomIndex}][maxMembers]" class="form-control" placeholder="Max members">
+      </div>
+    </div>
+  `;
+    container.appendChild(row);
+    roomIndex++;
+  });
+
+  // Remove room type row
+  document.getElementById("roomTypesContainer").addEventListener("click", function(e) {
+    if (e.target && e.target.classList.contains("removeRoomType")) {
+      e.target.closest(".room-type-row").remove();
+    }
   });
 </script>

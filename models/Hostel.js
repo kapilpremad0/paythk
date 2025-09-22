@@ -1,57 +1,52 @@
 const mongoose = require('mongoose');
 
+const RoomTypeSchema = new mongoose.Schema({
+  name: { type: String, required: true },       // Room type name: Single, Double, Suite
+  price: { type: Number, required: true },      // Price per night
+  beds: { type: Number, required: true },       // Number of beds
+  maxMembers: { type: Number, required: true }, // Maximum members allowed
+});
+
 const HostelSchema = new mongoose.Schema({
-    // Basic Details
-    name: { type: String, required: true },
-    type: { type: String, enum: ['Boys', 'Girls', 'Mixed'], required: true },
-    address: { type: String, required: true },
-    city: { type: String, required: false },
-    state: { type: String },
-    country: { type: String, default: 'India' },
-    pinCode: { type: String },
-    location: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Location",   // <-- Name of your Location model
-        required: true
-    },
-    // Facilities & Amenities
-    totalRooms: { type: Number, default: 0 },
-    occupancyPerRoom: { type: Number, default: 1 }, // single=1, double=2, etc.
-    foodFacility: { type: Boolean, default: false },
-    laundryService: { type: Boolean, default: false },
-    wifi: { type: Boolean, default: false },
-    security: { type: Boolean, default: true },
-    parking: { type: Boolean, default: false },
+  // Basic Details
+  name: { type: String, required: true },
+  address: { type: String, required: true },
 
-    // Contact & Management
-    contactPerson: { type: String },
-    contactNumber: { type: String },
-    email: { type: String },
-    website: { type: String },
+  location: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Location",   // <-- Name of your Location model
+    required: true
+  },
+  partner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",   // <-- Name of your Location model
+    required: true
+  },
+  // Contact & Management
+  contactPerson: { type: String },
+  contactNumber: { type: String },
+  email: { type: String },
+  website: { type: String },
 
-    // Financial Details
-    monthlyFee: { type: Number, default: 0 },
-    depositAmount: { type: Number, default: 0 },
-    paymentMode: { type: String, enum: ['Cash', 'Bank', 'Online'], default: 'Cash' },
+  // Images & Documents
+  images: [{ type: String }], // array of image filenames/paths
+  licenseDocument: { type: String },
+  // Optional Info
+  rules: { type: String },
+  additionalNotes: { type: String },
+  roomTypes: [RoomTypeSchema],
 
-    // Images & Documents
-    images: [{ type: String }], // array of image filenames/paths
-    licenseDocument: { type: String },
-
-    // Optional Info
-    rules: { type: String },
-    additionalNotes: { type: String },
 
 }, {
-    timestamps: true, // createdAt and updatedAt
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true }
+  timestamps: true, // createdAt and updatedAt
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
 
 // Example virtual to generate image URLs
 HostelSchema.virtual('imageUrls').get(function () {
-    const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
-    return this.images.map(img => `${baseUrl}/uploads/${img}`);
+  const baseUrl = process.env.BASE_URL || 'http://localhost:5000';
+  return this.images.map(img => `${baseUrl}/uploads/${img}`);
 });
 
 HostelSchema.virtual("licenseDocumentUrl").get(function () {
@@ -65,7 +60,7 @@ HostelSchema.virtual("licenseDocumentUrl").get(function () {
 
 
 HostelSchema.virtual("action_div").get(function () {
-    return `
+  return `
     <div class="dropdown">
       <button type="button" class="btn btn-sm dropdown-toggle hide-arrow py-0" data-bs-toggle="dropdown">
         <i data-feather="more-vertical"></i>

@@ -198,11 +198,11 @@ exports.updateData = async (req, res) => {
     const images = req.files?.images?.map(f => f.filename) || rental.images;
 
     rental.contactPerson = contactPerson,
-      rental.contactNumber = contactNumber,
-      rental.email = email,
-      rental.website = website,
+    rental.contactNumber = contactNumber,
+    rental.email = email,
+    rental.website = website,
 
-      rental.name = name;
+    rental.name = name;
     rental.location = location;
     rental.address = address;
     rental.terms = terms;

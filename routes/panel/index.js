@@ -2,6 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 // Panel subroutes
-router.use('/', require('../panel/homeRoutes'));
+router.use('/', require('./homeRoutes.js'));
 
 module.exports = router;
