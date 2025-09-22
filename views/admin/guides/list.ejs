@@ -31,7 +31,8 @@
                   <thead>
                     <tr>
                       <th>#</th>
-                      <th>Name</th>
+                      <th>Partner</th>
+                      <th>Guide Name</th>
                       <th>City</th>
                       <th>State</th>
                       <th>Address</th>
@@ -94,6 +95,9 @@
             return meta.settings._iDisplayStart + meta.row + 1;
           },
           searchable: false
+        },
+        {
+          data: "partner_div"
         },
         {
           data: 'name'

@@ -21,6 +21,13 @@ const guideSchema = new mongoose.Schema({
   email: { type: String },
   website: { type: String },
   languages: [{ type: String }],
+  partner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",   // <-- Name of your Location model
+    required: true
+  },
+
+
 }, { timestamps: true });
 
 guideSchema.virtual('imageUrls').get(function () {

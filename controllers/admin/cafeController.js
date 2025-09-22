@@ -1,5 +1,6 @@
 const Cafe = require('../../models/Cafe'); // Cafe model
 const Location = require('../../models/Location'); // Cafe model
+const User = require('../../models/User'); // Cafe model
 const Availability = require('../../models/Availability'); // Cafe model
 const path = require('path');
 const fs = require('fs');
@@ -19,7 +20,8 @@ exports.create = async (req, res) => {
     try {
         const locations = await Location.find();
         console.log(languages);
-        res.render('admin/cafes/create', { title: "Create Cafe", availabilities: null, cafe: null, locations, languages });
+        const partners = await User.find({ user_type: "partner", businessType: "Cafe" });
+        res.render('admin/cafes/create', { title: "Create Cafe", availabilities: null, cafe: null, locations, languages, partners });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -37,8 +39,8 @@ exports.edit = async (req, res) => {
             parentType: "Cafe"
         }).lean();
 
-
-        res.render('admin/cafes/create', { title: "Edit Cafe", availabilities: availabilities, cafe, locations, languages });
+        const partners = await User.find({ user_type: "partner", businessType: "Cafe" });
+        res.render('admin/cafes/create', { title: "Edit Cafe", availabilities: availabilities, cafe, locations, languages, partners });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -97,10 +99,25 @@ exports.getData = async (req, res) => {
             .skip(start)
             .limit(length)
             .populate("location", "city state")
+            .populate("partner") // populate partner fields
             .exec();
 
         const data = data_fetch.map((Cafe, index) => ({
             serial: start + index + 1,
+            partner_div: `
+                <div class="d-flex align-items-center">
+                <div class="avatar rounded">
+                    <div class="avatar-content">
+                    <img src="${Cafe.partner.profile_url}" width="50" height="50" alt="Toolbar svg" />
+                    </div>
+                </div>
+                <div>
+                    <div class="fw-bolder"><a href="/admin/partners/${Cafe.partner._id}">${Cafe.partner.name}</a></div>
+                    <div class="font-small-2 text-muted">${Cafe.partner.email}</div>
+                    <div class="font-small-2 text-muted">${Cafe.partner.mobile}</div>
+                </div>
+                </div>
+            `,
             name: Cafe.name,
             type: Cafe.type,
             city: Cafe.location.city ?? '',
@@ -126,7 +143,8 @@ exports.storeData = async (req, res) => {
             contactPerson,
             contactNumber,
             email,
-            languages
+            languages,
+            partner
 
             = [] } = req.body;
 
@@ -136,6 +154,7 @@ exports.storeData = async (req, res) => {
         const profile = req.files?.profile?.[0] ?? null; // uploaded profile image (if exists)
 
 
+        if (!partner) errors.partner = "Cafe partner is required";
         if (!name) errors.name = "Cafe name is required";
         if (!location) errors.location = "Location is required";
         if (!address) errors.address = "Address is required";
@@ -152,12 +171,13 @@ exports.storeData = async (req, res) => {
             contactNumber,
             email,
             languages,
+            partner,
             profile: profile ? profile.filename : "",
         });
 
         // 2️⃣ Create Availability (if provided)
         if (availability.length > 0) {
-            const availabilityDocs = availability.map(({ day, open_time = "", close_time = "", price = 0, late_fees = 0, status ,available_table}) => ({
+            const availabilityDocs = availability.map(({ day, open_time = "", close_time = "", price = 0, late_fees = 0, status, available_table }) => ({
                 parentId: cafe._id,
                 parentType: "Cafe",
                 day,
@@ -194,12 +214,14 @@ exports.updateData = async (req, res) => {
         const { name, location, address, terms, description, availability, contactPerson,
             contactNumber,
             languages,
-            email
+            email,
+            partner
             = [] } = req.body;
 
         // Basic validation
         const errors = {};
         if (!name) errors.name = "Cafe name is required";
+        if (!partner) errors.partner = "Cafe partner is required";
         if (!location) errors.location = "Location is required";
         if (!address) errors.address = "Address is required";
 
@@ -216,6 +238,7 @@ exports.updateData = async (req, res) => {
             cafe.profile = profile ? profile.filename : cafe.profile;
 
         cafe.name = name;
+        cafe.partner = partner;
         cafe.location = location;
         cafe.languages = languages;
         cafe.address = address;
@@ -234,7 +257,7 @@ exports.updateData = async (req, res) => {
 
             // Insert new ones
             if (availArray.length > 0) {
-                const availabilityDocs = availArray.map(({ day, open_time = "", close_time = "", price = 0, late_fees = 0, status , available_table }) => ({
+                const availabilityDocs = availArray.map(({ day, open_time = "", close_time = "", price = 0, late_fees = 0, status, available_table }) => ({
                     parentId: cafe._id,
                     parentType: "Cafe",
                     day,

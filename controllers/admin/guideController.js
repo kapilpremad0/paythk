@@ -1,5 +1,6 @@
 const Guide = require('../../models/Guide'); // Guide model
 const Location = require('../../models/Location'); // Guide model
+const User = require('../../models/User'); // Guide model
 const Availability = require('../../models/Availability'); // Guide model
 const path = require('path');
 const fs = require('fs');
@@ -19,7 +20,8 @@ exports.create = async (req, res) => {
     try {
         const locations = await Location.find();
         console.log(languages);
-        res.render('admin/guides/create', { title: "Create Guide", availabilities: null, guide: null, locations, languages });
+        const partners = await User.find({ user_type: "partner", businessType: "Guide" });
+        res.render('admin/guides/create', { title: "Create Guide", availabilities: null, guide: null, locations, languages, partners });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -37,8 +39,8 @@ exports.edit = async (req, res) => {
             parentType: "Guide"
         }).lean();
 
-
-        res.render('admin/guides/create', { title: "Edit Guide", availabilities: availabilities, guide, locations, languages });
+        const partners = await User.find({ user_type: "partner", businessType: "Guide" });
+        res.render('admin/guides/create', { title: "Edit Guide", availabilities: availabilities, guide, locations, languages, partners });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -97,10 +99,26 @@ exports.getData = async (req, res) => {
             .skip(start)
             .limit(length)
             .populate("location", "city state")
+            .populate("partner") // populate partner fields
+
             .exec();
 
         const data = data_fetch.map((Guide, index) => ({
             serial: start + index + 1,
+            partner_div: `
+                <div class="d-flex align-items-center">
+                <div class="avatar rounded">
+                    <div class="avatar-content">
+                    <img src="${Guide.partner.profile_url}" width="50" height="50" alt="Toolbar svg" />
+                    </div>
+                </div>
+                <div>
+                    <div class="fw-bolder"><a href="/admin/partners/${Guide.partner._id}">${Guide.partner.name}</a></div>
+                    <div class="font-small-2 text-muted">${Guide.partner.email}</div>
+                    <div class="font-small-2 text-muted">${Guide.partner.mobile}</div>
+                </div>
+                </div>
+            `,
             name: Guide.name,
             type: Guide.type,
             city: Guide.location.city ?? '',
@@ -126,7 +144,8 @@ exports.storeData = async (req, res) => {
             contactPerson,
             contactNumber,
             email,
-            languages
+            languages,
+            partner
 
             = [] } = req.body;
 
@@ -136,6 +155,7 @@ exports.storeData = async (req, res) => {
         const profile = req.files?.profile?.[0] ?? null; // uploaded profile image (if exists)
 
 
+        if (!partner) errors.partner = "Guide partner is required";
         if (!name) errors.name = "Guide name is required";
         if (!location) errors.location = "Location is required";
         if (!address) errors.address = "Address is required";
@@ -151,6 +171,7 @@ exports.storeData = async (req, res) => {
             name, location, address, terms, description, images, contactPerson,
             contactNumber,
             email,
+            partner,
             languages,
             profile: profile ? profile.filename : "",
         });
@@ -193,12 +214,14 @@ exports.updateData = async (req, res) => {
         const { name, location, address, terms, description, availability, contactPerson,
             contactNumber,
             languages,
-            email
+            email,
+            partner
             = [] } = req.body;
 
         // Basic validation
         const errors = {};
         if (!name) errors.name = "Guide name is required";
+        if (!partner) errors.partner = "Guide partner is required";
         if (!location) errors.location = "Location is required";
         if (!address) errors.address = "Address is required";
 
@@ -215,6 +238,7 @@ exports.updateData = async (req, res) => {
             guide.profile = profile ? profile.filename : guide.profile;
 
         guide.name = name;
+        guide.partner = partner;
         guide.location = location;
         guide.languages = languages;
         guide.address = address;
