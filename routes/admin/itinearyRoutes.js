@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get('/', adminAuth, itinearyController.getList);
 router.post('/data', adminAuth, itinearyController.getData);
+router.get('/:id', adminAuth, itinearyController.getDetail);
 
 
 module.exports = router;

@@ -7,6 +7,7 @@ const itinerarySchema = new mongoose.Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   notes: { type: String },
+  plan_details: { type: String }, // <--- store editable plan (HTML/text)
 
   status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" }
 }, { timestamps: true });

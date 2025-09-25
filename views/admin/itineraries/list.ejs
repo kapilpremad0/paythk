@@ -23,6 +23,7 @@
                       <th>Notes</th>
                       <th>Status</th>
                       <th>Created At</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody></tbody>
@@ -51,33 +52,47 @@
 
         }
       },
-      
-      columns: [
-        {
+
+      columns: [{
           data: null,
           render: function(data, type, row, meta) {
             return meta.settings._iDisplayStart + meta.row + 1;
           },
           searchable: false
         },
-        { data: 'user', defaultContent: '-' },   // later you can populate with user name using populate
-        { data: 'destination' },
-        { 
+        {
+          data: 'user',
+          defaultContent: '-'
+        }, // later you can populate with user name using populate
+        {
+          data: 'destination'
+        },
+        {
           data: 'startDate',
           render: d => new Date(d).toLocaleDateString()
         },
-        { 
+        {
           data: 'endDate',
           render: d => new Date(d).toLocaleDateString()
         },
-        { data: 'notes' },
-        { 
+        {
+          data: 'notes'
+        },
+        {
           data: 'status',
           render: s => `<span class="badge bg-${s === 'pending' ? 'warning' : 'success'}">${s}</span>`
         },
-        { 
+        {
           data: 'createdAt',
           render: d => new Date(d).toLocaleString()
+        },
+        {
+          data: '_id',
+          render: function(data) {
+            return `<a href="/admin/itineraries/${data}" class="btn btn-sm btn-primary">View</a>`;
+          },
+          orderable: false,
+          searchable: false
         }
       ],
       drawCallback: function(settings) {

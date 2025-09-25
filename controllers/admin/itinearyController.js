@@ -9,6 +9,17 @@ exports.getList = async (req, res) => {
   }
 };
 
+exports.getDetail = async (req, res) => {
+  try {
+    const itinerary = await Itinerary.findById(req.params.id).populate("userId", "name email").lean();
+    if (!itinerary) return res.status(404).send("Itinerary not found");
+    res.render("admin/itineraries/show", { itinerary });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
 exports.getData = async (req, res) => {
   try {
     const draw = parseInt(req.body.draw) || 0;
@@ -50,7 +61,8 @@ exports.getData = async (req, res) => {
       endDate: itinerary.endDate,
       notes: itinerary.notes || "",
       status: itinerary.status,
-      createdAt: itinerary.createdAt
+      createdAt: itinerary.createdAt,
+      _id: itinerary._id
     }));
 
     res.json({

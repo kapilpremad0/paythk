@@ -1,0 +1,94 @@
+<link rel="stylesheet" type="text/css" href="/admin/app-assets/vendors/css/editors/quill/quill.snow.css">
+<link rel="stylesheet" type="text/css" href="/admin/app-assets/css/plugins/forms/form-quill-editor.css">
+
+
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-header row"></div>
+    <div class="content-body">
+
+      <div class="col-xl-12 col-lg-12">
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Itinerary: <%= itinerary.destination %></h2>
+          </div>
+          <div class="card-body">
+
+            <p>User: <%= itinerary.userId ? itinerary.userId.name : "-" %></p>
+            <p>Start: <%= new Date(itinerary.startDate).toLocaleDateString() %></p>
+            <p>End: <%= new Date(itinerary.endDate).toLocaleDateString() %></p>
+            <p>Status: <%= itinerary.status %></p>
+
+            <!-- Plan display -->
+            <div id="plan-display">
+              <% if(itinerary.plan_details){ %>
+              <%- itinerary.plan_details %>
+              <% } else { %>
+              <em>No plan added yet.</em>
+              <% } %>
+            </div>
+
+            <button id="edit-plan-btn" class="btn btn-primary">Edit Plan</button>
+
+            <!-- Plan editor form -->
+            <div id="plan-editor" style="display:none;">
+
+
+              <div class="mb-2">
+
+                <div id="full-wrapper">
+                  <div id="full-container">
+                    <div class="editor" id="description_nontent">
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <input type="hidden" id="description_id" name="description">
+
+              <button type="submit" class="btn btn-success">Save Plan</button>
+              <button type="button" id="cancel-edit" class="btn btn-danger">Cancel</button>
+
+            </div>
+
+            <script>
+              const editBtn = document.getElementById('edit-plan-btn');
+              const editorDiv = document.getElementById('plan-editor');
+              const displayDiv = document.getElementById('plan-display');
+              const cancelBtn = document.getElementById('cancel-edit');
+
+              editBtn.addEventListener('click', () => {
+                editBtn.style.display = "none"
+                editorDiv.style.display = 'block';
+                displayDiv.style.display = 'none';
+              });
+
+              cancelBtn.addEventListener('click', () => {
+                editBtn.style.display = "block"
+
+                editorDiv.style.display = 'none';
+                displayDiv.style.display = 'block';
+
+              });
+            </script>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- BEGIN Vendor JS-->
+
+<!-- BEGIN: Page Vendor JS-->
+<script src="/admin/app-assets/vendors/js/editors/quill/katex.min.js"></script>
+<script src="/admin/app-assets/vendors/js/editors/quill/highlight.min.js"></script>
+<script src="/admin/app-assets/vendors/js/editors/quill/quill.min.js"></script>
+<script src="/admin/app-assets/js/scripts/forms/form-quill-editor.js"></script>
