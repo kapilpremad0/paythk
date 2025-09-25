@@ -1,0 +1,316 @@
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-header row"></div>
+    <div class="content-body">
+
+      <div class="col-xl-12 col-lg-12">
+        <form id="submitForm" method="post" enctype="multipart/form-data">
+          <!-- hidden field to detect edit mode -->
+          <input type="hidden" id="hostel_id" name="hostel_id" value="<%= hostel ? hostel._id : '' %>">
+
+          <div class="card">
+            <div class="card-header">
+              <h3> <%= hostel ? 'Edit Hostel' : 'Create Hostel' %></h3>
+            </div>
+            <div class="card-body">
+              <div class="row">
+
+                <!-- Basic Details -->
+                <div class="mb-1 col-md-6">
+                  <label for="name">Hostel Name</label>
+                  <input type="text" class="form-control" id="name" name="name" value="<%= hostel ? hostel.name : '' %>" placeholder="Enter hostel name" />
+                  <div id="name-submit_errors" class="validation-error"></div>
+                </div>
+
+
+
+
+                <div class="mb-1 col-md-6">
+                  <label for="location">Select Location</label>
+                  <select name="location" class="form-select select2">
+                    <option value="">-- Select Location --</option>
+                    <% locations.forEach(loc => { %>
+                    <option value="<%= loc._id %>" <%= hostel && hostel.location && hostel.location.toString() === loc._id.toString() ? 'selected' : '' %>>
+
+                      <%= loc.city %>,
+                      <%= loc.state %></option>
+                    <% }) %>
+                  </select>
+                  <div id="location-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="partner">Select Partner</label>
+                  <select name="partner" class="form-select select2">
+                    <option value="">-- Select partner --</option>
+                    <% partners.forEach(loc => { %>
+                    <option value="<%= loc._id %>" <%= hostel && hostel.partner && hostel.partner.toString() === loc._id.toString() ? 'selected' : '' %>>
+
+                      <%= loc.name %>,
+                      <%= loc.mobile %></option>
+                    <% }) %>
+                  </select>
+                  <div id="partner-submit_errors" class="validation-error"></div>
+                </div>
+
+
+
+
+
+                <!-- Contact -->
+                <div class="mb-1 col-md-6">
+                  <label for="contactPerson">Contact Person</label>
+                  <input type="text" class="form-control" id="contactPerson" name="contactPerson" value="<%= hostel ? hostel.contactPerson : '' %>" placeholder="Enter contact person" />
+                  <div id="contactPerson-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="contactNumber">Contact Number</label>
+                  <input type="text" class="form-control" id="contactNumber" name="contactNumber" value="<%= hostel ? hostel.contactNumber : '' %>" placeholder="Enter contact number" />
+                  <div id="contactNumber-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="email">Email</label>
+                  <input type="email" class="form-control" id="email" name="email" value="<%= hostel ? hostel.email : '' %>" placeholder="Enter email address" />
+                  <div id="email-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="website">Website</label>
+                  <input type="text" class="form-control" id="website" name="website" value="<%= hostel ? hostel.website : '' %>" placeholder="Enter website URL" />
+                  <div id="website-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Files -->
+                <div class="mb-1 col-md-6">
+                  <label for="images">Images</label>
+                  <input type="file" class="form-control" id="images" name="images" multiple />
+                  <% if (hostel && hostel.images && hostel.images.length > 0) { %>
+                  <% hostel.imageUrls.forEach(img => { %>
+                  <img src="<%= img %>" alt="Image" width="50" class="mt-1 rounded" />
+                  <% }) %>
+                  <% } %>
+                  <div id="images-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-6">
+                  <label for="licenseDocument">License Document</label>
+                  <input type="file" class="form-control" id="licenseDocument" name="licenseDocument" />
+                  <% if (hostel && hostel.licenseDocument) { %>
+                  <a href="<%= hostel.licenseDocumentUrl %>" target="_blank">View Document</a>
+                  <% } %>
+                  <div id="licenseDocument-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Rules & Notes -->
+                <div class="mb-1 col-md-12">
+                  <label for="rules">Hostel Rules</label>
+                  <textarea class="form-control" id="rules" name="rules" placeholder="Enter hostel rules"><%= hostel ? hostel.rules : '' %></textarea>
+                  <div id="rules-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-12">
+                  <label for="additionalNotes">Additional Notes</label>
+                  <textarea class="form-control" id="additionalNotes" name="additionalNotes" placeholder="Enter additional notes"><%= hostel ? hostel.additionalNotes : '' %></textarea>
+                  <div id="additionalNotes-submit_errors" class="validation-error"></div>
+                </div>
+
+                <div class="mb-1 col-md-12">
+                  <label for="address">Address</label>
+                  <textarea class="form-control" id="address" name="address" placeholder="Enter hostel address"><%= hostel ? hostel.address : '' %></textarea>
+                  <div id="address-submit_errors" class="validation-error"></div>
+                </div>
+
+
+                <table class="table table-bordered mb-2" id="availability-table">
+                  <thead>
+                    <tr>
+                      <th>Day</th>
+                      <th>Status</th>
+                      <th>Open Time</th>
+                      <th>Close Time</th>
+                      <!-- <th>Price</th> -->
+                      <!-- <th>Late Fees</th> -->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].forEach((day, i) => { 
+        let av = availabilities ? availabilities.find(a => a.day === day) : null; 
+    %>
+                    <tr>
+                      <td>
+                        <%= day %>
+                        <input type="hidden" name="availability[<%= i %>][day]" value="<%= day %>" />
+                      </td>
+                      <td>
+                        <div class="form-check form-check-primary form-switch">
+                          <input type="checkbox" name="availability[<%= i %>][status]" class="form-check-input" value="active" <%= av && av.status === 'active' ? 'checked' : '' %>>
+                        </div>
+                      </td>
+                      <td>
+                        <input type="time" class="form-control" name="availability[<%= i %>][open_time]" value="<%= av ? av.open_time : '' %>" />
+                      </td>
+                      <td>
+                        <input type="time" class="form-control" name="availability[<%= i %>][close_time]" value="<%= av ? av.close_time : '' %>" />
+                      </td>
+                      <!-- <td>
+                        <input type="number" class="form-control" name="availability[<%= i %>][price]" value="<%= av ? av.price : '' %>" />
+                      </td>
+                      <td>
+                        <input type="number" class="form-control" name="availability[<%= i %>][late_fees]" value="<%= av ? av.late_fees : '' %>" />
+                      </td> -->
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+
+
+                <div class="card mb-3">
+                  <div class="card-header">
+                    <h4>Room Types</h4>
+                    <button type="button" class="btn btn-sm btn-success float-end" id="addRoomTypeBtn">Add Room Type</button>
+                  </div>
+                  <div class="card-body">
+                    <div id="roomTypesContainer">
+                      <% if (hostel && hostel.roomTypes && hostel.roomTypes.length > 0) { %>
+                      <% hostel.roomTypes.forEach((room, index) => { %>
+                      <div class="room-type-row mb-2 border p-2 position-relative">
+                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 removeRoomType">X</button>
+                        <div class="row">
+                          <div class="col-md-3">
+                            <label>Room Type</label>
+                            <input type="text" name="roomTypes[<%= index %>][name]" class="form-control" value="<%= room.name %>" placeholder="Single/Double/Suite">
+                          </div>
+                          <div class="col-md-3">
+                            <label>Price per Night</label>
+                            <input type="number" name="roomTypes[<%= index %>][price]" class="form-control" value="<%= room.price %>" placeholder="Enter price">
+                          </div>
+                          <div class="col-md-3">
+                            <label>No. of Beds</label>
+                            <input type="number" name="roomTypes[<%= index %>][beds]" class="form-control" value="<%= room.beds %>" placeholder="Beds">
+                          </div>
+                          <div class="col-md-3">
+                            <label>Max Members Allowed</label>
+                            <input type="number" name="roomTypes[<%= index %>][maxMembers]" class="form-control" value="<%= room.maxMembers %>" placeholder="Max members">
+                          </div>
+                        </div>
+                      </div>
+                      <% }) %>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+
+              </div>
+
+              <!-- Submit -->
+              <button type="submit" class="btn btn-primary mt-2">
+                <%= hostel ? 'Update Hostel' : 'Save Hostel' %>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#submitForm').on('submit', function(e) {
+      e.preventDefault();
+      $('.validation-error').text('');
+
+      const formData = new FormData(this);
+      const hostelId = $('#hostel_id').val();
+
+      let url = '/admin/hostels';
+      let method = 'POST';
+
+      if (hostelId) { // editing
+        url = '/admin/hostels/' + hostelId;
+        method = 'PUT';
+      }
+      $('#form-loader').show();
+
+      $.ajax({
+        url: url,
+        method: method,
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          $('#form-loader').hide();
+          window.location.href = '/admin/hostels'; // redirect after save
+        },
+        error: function(res) {
+          $('#form-loader').hide();
+          if (res.status == 400 || res.status == 422) {
+            if (res.responseJSON && res.responseJSON.errors) {
+              var error = res.responseJSON.errors;
+              $.each(error, function(key, value) {
+                $("#" + key + "-submit_errors").text(value);
+              });
+            }
+          }
+          if (res.status == 500) {
+            showErrorToast(res.responseJSON.error);
+          }
+          if (res.status == 404) {
+            showErrorToast('Something went wrong');
+          }
+        }
+      });
+    });
+  });
+</script>
+
+
+<script>
+  let roomIndex = <%= hostel && hostel.roomTypes ? hostel.roomTypes.length : 0 %>;
+
+  document.getElementById("addRoomTypeBtn").addEventListener("click", function() {
+    const container = document.getElementById("roomTypesContainer");
+
+    const row = document.createElement("div");
+    row.classList.add("room-type-row", "mb-2", "border", "p-2", "position-relative");
+    row.innerHTML = `
+    <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 removeRoomType">X</button>
+    <div class="row">
+      <div class="col-md-3">
+        <label>Room Type</label>
+        <input type="text" name="roomTypes[${roomIndex}][name]" class="form-control" placeholder="Single/Double/Suite">
+      </div>
+      <div class="col-md-3">
+        <label>Price per Night</label>
+        <input type="number" name="roomTypes[${roomIndex}][price]" class="form-control" placeholder="Enter price">
+      </div>
+      <div class="col-md-3">
+        <label>No. of Beds</label>
+        <input type="number" name="roomTypes[${roomIndex}][beds]" class="form-control" placeholder="Beds">
+      </div>
+      <div class="col-md-3">
+        <label>Max Members Allowed</label>
+        <input type="number" name="roomTypes[${roomIndex}][maxMembers]" class="form-control" placeholder="Max members">
+      </div>
+    </div>
+  `;
+    container.appendChild(row);
+    roomIndex++;
+  });
+
+  // Remove room type row
+  document.getElementById("roomTypesContainer").addEventListener("click", function(e) {
+    if (e.target && e.target.classList.contains("removeRoomType")) {
+      e.target.closest(".room-type-row").remove();
+    }
+  });
+</script>

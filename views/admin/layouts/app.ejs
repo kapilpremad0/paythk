@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<!-- BEGIN: Head-->
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimal-ui">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="author" content="">
+  <title>
+    <%= typeof title !=='undefined' ? title : '' %> | Admin Panel - <%= appName %>
+  </title>
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600" rel="stylesheet">
+
+  <!-- BEGIN: Vendor CSS-->
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/vendors/css/vendors.min.css">
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/vendors/css/forms/select/select2.min.css">
+  <!-- END: Vendor CSS-->
+
+  <!-- BEGIN: Theme CSS-->
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/css/bootstrap-extended.css">
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/css/colors.css">
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/css/components.css">
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/css/themes/dark-layout.css">
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/css/themes/bordered-layout.css">
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/css/themes/semi-dark-layout.css">
+  <!-- END: Theme CSS-->
+
+  <!-- BEGIN: Page CSS-->
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/css/core/menu/menu-types/vertical-menu.css">
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/css/pages/dashboard-ecommerce.css">
+  <link rel="stylesheet" type="text/css" href="/admin/app-assets/css/plugins/charts/chart-apex.css">
+  <!-- END: Page CSS-->
+
+  <!-- BEGIN: Custom CSS-->
+  <link rel="stylesheet" type="text/css" href="/admin/assets/css/style.css">
+  <!-- END: Custom CSS-->
+
+
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <!-- END: Custom CSS-->
+
+
+  <style>
+    .validation-error {
+      color: red;
+    }
+
+
+    #form-loader {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.92);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    #form-loader img {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 10px;
+    }
+  </style>
+
+</head>
+<!-- END: Head-->
+
+<!-- BEGIN: Body-->
+
+<body class="vertical-layout vertical-menu-modern  navbar-floating footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="">
+
+  <div id="form-loader" style="display:none;">
+    <img src="/loder.gif" alt="Loading...">
+    <p class="fw-bold text-gray-700">Submitting, please wait...</p>
+  </div>
+
+  <!-- BEGIN: Header-->
+  <nav class="header-navbar navbar navbar-expand-lg align-items-center floating-nav navbar-light navbar-shadow container-xxl">
+    <div class="navbar-container d-flex content">
+      <div class="bookmark-wrapper d-flex align-items-center">
+        <ul class="nav navbar-nav d-xl-none">
+          <li class="nav-item"><a class="nav-link menu-toggle" href="#"><i class="ficon" data-feather="menu"></i></a></li>
+        </ul>
+
+
+      </div>
+      <ul class="nav navbar-nav align-items-center ms-auto">
+
+
+
+
+        <li class="nav-item dropdown dropdown-user"><a class="nav-link dropdown-toggle dropdown-user-link" id="dropdown-user" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="user-nav d-sm-flex d-none"><span class="user-name fw-bolder">John Doe</span><span class="user-status">Admin</span></div><span class="avatar"><img class="round" src="/admin/app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" height="40" width="40"><span class="avatar-status-online"></span></span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-user">
+            <!-- <a class="dropdown-item" href="page-profile.html"><i class="me-50" data-feather="user"></i>
+              Profile</a>
+
+            <a class="dropdown-item" href="page-account-settings-account.html"><i class="me-50" data-feather="settings"></i>
+              Settings</a> -->
+
+            <% if (userRole == 'admin') { %>
+            <a class="dropdown-item" href="<%= '/admin/logout' %>"><i class="me-50" data-feather="power"></i> Logout</a>
+
+            <% } else if (userRole == 'partner') { %>
+
+            <a class="dropdown-item" href="<%= '/panel/logout' %>"><i class="me-50" data-feather="power"></i> Logout</a>
+
+
+            <% } %>
+
+
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+
+
+  <!-- BEGIN: Main Menu-->
+  <%- include('../layouts/sidebar') %>
+  <!-- END: Main Menu-->
+
+  <!-- BEGIN: Content-->
+  <%- body %>
+  <!-- express-ejs-layouts injects the page content here -->
+  <!-- END: Content-->
+
+  <div class="sidenav-overlay"></div>
+  <div class="drag-target"></div>
+
+  <!-- BEGIN: Footer-->
+  <footer class="footer footer-static footer-light">
+    <p class="clearfix mb-0"><span class="float-md-start d-block d-md-inline-block mt-25">COPYRIGHT &copy; 2025<a class="ms-25" href="https://premad.in/" target="_blank">Premad</a><span class="d-none d-sm-inline-block">, All rights Reserved</span></span><span class="float-md-end d-none d-md-block">Hand-crafted & Made with<i data-feather="heart"></i></span></p>
+  </footer>
+  <button class="btn btn-primary btn-icon scroll-top" type="button"><i data-feather="arrow-up"></i></button>
+  <!-- END: Footer-->
+
+
+
+  <%- include('../layouts/js') %>
+
+
+</body>
+<!-- END: Body-->
+
+</html>

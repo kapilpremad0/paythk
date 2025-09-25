@@ -1,0 +1,150 @@
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-header row"></div>
+    <div class="content-body">
+
+      <div class="col-xl-12 col-lg-12">
+        <form id="submitForm" method="post" enctype="multipart/form-data">
+          <input type="hidden" id="plan_id" name="plan_id" value="<%= plan ? plan._id : '' %>">
+
+          <div class="card">
+            <div class="card-header">
+              <h3><%= plan ? 'Edit Plan' : 'Create Plan' %></h3>
+            </div>
+            <div class="card-body">
+              <div class="row">
+
+                <!-- Plan Name -->
+                <div class="mb-1 col-md-6">
+                  <label for="plan_name">Plan Name</label>
+                  <input type="text" class="form-control" id="plan_name" name="plan_name" value="<%= plan ? plan.plan_name : '' %>" placeholder="Enter plan name" required />
+                  <div id="plan_name-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Amount -->
+                <div class="mb-1 col-md-6">
+                  <label for="amount">Amount</label>
+                  <input type="number" class="form-control" id="amount" name="amount" value="<%= plan ? plan.amount : '' %>" placeholder="Enter amount" required />
+                  <div id="amount-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Status -->
+                <div class="mb-1 col-md-6">
+                  <label for="status">Status</label>
+                  <div class="form-check form-check-primary form-switch">
+                    <input type="checkbox" class="form-check-input" id="status" name="status" value="active" <%= plan && plan.status === 'active' ? 'checked' : '' %>>
+                    <label class="form-check-label" for="status">Active</label>
+                  </div>
+                </div>
+
+                <!-- Is Free -->
+                <div class="mb-1 col-md-6">
+                  <label for="is_free">Is Free</label>
+                  <div class="form-check form-check-primary form-switch">
+                    <input type="checkbox" class="form-check-input" id="is_free" name="is_free" value="1" <%= plan && plan.is_free ? 'checked' : '' %>>
+                    <label class="form-check-label" for="is_free">Yes</label>
+                  </div>
+                </div>
+
+                <!-- Hostel Limit -->
+                <!-- <div class="mb-1 col-md-4">
+                  <label for="hostel_limit">Hostel Limit</label>
+                  <input type="number" class="form-control" id="hostel_limit" name="hostel_limit" value="<%= plan ? plan.hostel_limit : '' %>" placeholder="Enter hostel limit" />
+                </div> -->
+
+                <!-- Guide Limit -->
+                <!-- <div class="mb-1 col-md-4">
+                  <label for="guide_limit">Guide Limit</label>
+                  <input type="number" class="form-control" id="guide_limit" name="guide_limit" value="<%= plan ? plan.guide_limit : '' %>" placeholder="Enter guide limit" />
+                </div> -->
+
+                <!-- Rental Limit -->
+                <!-- <div class="mb-1 col-md-4">
+                  <label for="rental_limit">Rental Limit</label>
+                  <input type="number" class="form-control" id="rental_limit" name="rental_limit" value="<%= plan ? plan.rental_limit : '' %>" placeholder="Enter rental limit" />
+                </div> -->
+
+                <div class="mb-1 col-md-4">
+                  <label for="itinerary_limit">Itinerary Limit</label>
+                  <input type="number" class="form-control" id="itinerary_limit" name="itinerary_limit" value="<%= plan ? plan.itinerary_limit : '' %>" placeholder="Enter itinerary limit" />
+                </div>
+
+                <div class="mb-1 col-md-4">
+                  <label for="circle_limit">Circle Limit</label>
+                  <input type="number" class="form-control" id="circle_limit" name="circle_limit" value="<%= plan ? plan.circle_limit : '' %>" placeholder="Enter circle limit" />
+                </div>
+
+                <div class="mb-1 col-md-4">
+                  <label for="buddy_scroll_limit">Buddy Scroll Limit</label>
+                  <input type="number" class="form-control" id="buddy_scroll_limit" name="buddy_scroll_limit" value="<%= plan ? plan.buddy_scroll_limit : '' %>" placeholder="Enter buddy scroll limit" />
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3 col-md-12">
+                  <label for="description">Description</label>
+                  <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description"><%= plan ? plan.description : '' %></textarea>
+                  <div id="description-submit_errors" class="validation-error"></div>
+                </div>
+
+                <!-- Submit -->
+                <div class="mb-2">
+                  <button type="submit" class="btn btn-primary mt-3">
+                    <%= plan ? 'Update Plan' : 'Save Plan' %>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#submitForm').on('submit', function(e) {
+      e.preventDefault();
+      $('.validation-error').text('');
+
+      const formData = new FormData(this);
+      const planId = $('#plan_id').val();
+
+      let url = '/admin/plans';
+      let method = 'POST';
+
+      if (planId) {
+        url = '/admin/plans/' + planId;
+        method = 'PUT';
+      }
+
+      $.ajax({
+        url: url,
+        method: method,
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          window.location.href = '/admin/plans';
+        },
+        error: function(res) {
+          if (res.status == 400 || res.status == 422) {
+            if (res.responseJSON && res.responseJSON.errors) {
+              var error = res.responseJSON.errors;
+              $.each(error, function(key, value) {
+                $("#" + key + "-submit_errors").text(value);
+              });
+            }
+          }
+          if (res.status == 500) {
+            alert(res.responseJSON.error);
+          }
+        }
+      });
+    });
+  });
+</script>

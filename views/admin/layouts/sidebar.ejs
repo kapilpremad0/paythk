@@ -1,0 +1,136 @@
+<div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">
+  <div class="navbar-header">
+    <ul class="nav navbar-nav flex-row">
+      <li class="nav-item me-auto"><a class="navbar-brand" <% if (userRole == 'admin') { %> href="<%= '/admin/' %>">
+
+          <% } else if (userRole == 'partner') { %>
+          href="<%= '/panel/' %>">
+          <% } %>
+
+
+
+          <span class="brand-logo">
+
+          </span>
+          <img src="/logo.jpeg" alt="" style="width: 73%;">
+          <!-- <h2 class="brand-text"></h2> -->
+        </a></li>
+      <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pe-0" data-bs-toggle="collapse"><i class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i><i class="d-none d-xl-block collapse-toggle-icon font-medium-4  text-primary" data-feather="disc" data-ticon="disc"></i></a></li>
+    </ul>
+  </div>
+  <div class="shadow-bottom"></div>
+  <div class="main-menu-content">
+    <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
+
+
+      <% if (userRole == 'admin') { %>
+
+      <li class="nav-item <%= currentRoute == '/admin/' ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/admin">
+          <i data-feather="home"></i>
+          <span class="menu-title text-truncate" data-i18n="Dashboard">Dashboard</span>
+        </a>
+      </li>
+
+      <li class="nav-item <%= currentRoute.startsWith('/admin/users') ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/admin/users">
+          <i data-feather="users"></i>
+          <span class="menu-title text-truncate" data-i18n="Users">Users</span>
+        </a>
+      </li>
+
+      <li class="nav-item <%= currentRoute.startsWith('/admin/partners') ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/admin/partners">
+          <i data-feather="user-check"></i>
+          <span class="menu-title text-truncate" data-i18n="Partners">Partners</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="d-flex align-items-center" href="#">
+          <i data-feather="home"></i>
+          <span class="menu-title text-truncate" data-i18n="Hostels">Hostel</span>
+        </a>
+        <ul class="menu-content">
+          <li class="nav-item <%= currentRoute.startsWith('/admin/hostels') ? 'active' : '' %>">
+            <a class="d-flex align-items-center" href="/admin/hostels">
+              <i data-feather="list"></i>
+              <span class="menu-title text-truncate" data-i18n="List">List</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item <%= currentRoute.startsWith('/admin/rentals') ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/admin/rentals">
+          <i data-feather="briefcase"></i>
+          <span class="menu-title text-truncate" data-i18n="Rentals">Rentals</span>
+        </a>
+      </li>
+
+      <li class="nav-item <%= currentRoute.startsWith('/admin/guides') ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/admin/guides">
+          <i data-feather="map-pin"></i>
+          <span class="menu-title text-truncate" data-i18n="Guide">Guide</span>
+        </a>
+      </li>
+
+      <li class="nav-item <%= currentRoute.startsWith('/admin/cafes') ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/admin/cafes">
+          <i data-feather="coffee"></i>
+          <span class="menu-title text-truncate" data-i18n="Cafe">Cafe</span>
+        </a>
+      </li>
+
+      <li class="nav-item <%= currentRoute.startsWith('/admin/plans') ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/admin/plans">
+          <i data-feather="refresh-cw"></i>
+          <span class="menu-title text-truncate" data-i18n="Cafe">Subscriptions</span>
+        </a>
+      </li>
+
+      <li class="nav-item <%= currentRoute.startsWith('/admin/transactions') ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/admin/transactions">
+          <i data-feather="credit-card"></i>
+          <span class="menu-title text-truncate" data-i18n="Cafe">Wallet Transaction</span>
+        </a>
+      </li>
+
+      <li class="nav-item <%= currentRoute.startsWith('/admin/coupons') ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/admin/coupons">
+          <i data-feather="tag"></i>
+          <span class="menu-title text-truncate" data-i18n="Cafe">Coupon</span>
+        </a>
+      </li>
+
+      <li class="nav-item <%= currentRoute.startsWith('/admin/itineraries') ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/admin/itineraries">
+          <i data-feather="map-pin"></i>
+          <span class="menu-title text-truncate" data-i18n="Cafe">Itineraries</span>
+        </a>
+      </li>
+
+      <li class="nav-item <%= currentRoute.startsWith('/admin/settings') ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/admin/settings">
+          <i data-feather="settings"></i>
+          <span class="menu-title text-truncate" data-i18n="Setting">Settings</span>
+        </a>
+      </li>
+
+
+      <% } else if (userRole == 'partner') { %>
+
+      <li class="nav-item <%= currentRoute == '/panel/' ? 'active' : '' %>">
+        <a class="d-flex align-items-center" href="/panel/">
+          <i data-feather="home"></i>
+          <span class="menu-title text-truncate" data-i18n="Dashboard">Dashboard</span>
+        </a>
+      </li>
+
+
+      <% } %>
+
+    </ul>
+  </div>
+
+</div>

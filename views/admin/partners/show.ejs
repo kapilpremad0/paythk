@@ -1,0 +1,230 @@
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-header row"></div>
+    <div class="content-body">
+
+      <div class="col-xl-12 col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title"><%= user.name %> Details
+              <a href="/admin/partners/edit/<%= user._id %>">
+                <i data-feather="edit" class="me-50"></i>
+              </a>
+            </h4>
+          </div>
+          <div class="card-body">
+
+            <ul class="nav nav-tabs nav-justified" id="myTab2" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="profile-tab-justified" data-bs-toggle="tab" href="#profile-just" role="tab" aria-controls="profile-just" aria-selected="true">
+                  Profile
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="bookings-tab-justified" data-bs-toggle="tab" href="#bookings-just" role="tab" aria-controls="bookings-just" aria-selected="false">
+                  Bookings
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="wallet_transaction-tab-justified" data-bs-toggle="tab" href="#wallet_transaction-just" role="tab" aria-controls="wallet_transaction-just" aria-selected="false">
+                  Wallet Transaction
+                </a>
+              </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content pt-1">
+
+              <!-- Profile Tab -->
+              <div class="tab-pane active" id="profile-just" role="tabpanel" aria-labelledby="profile-tab-justified">
+                <div class="row">
+                  <div class="col-md-4 text-center">
+
+                    <img src="<%= user.profile_url %>" class="img-fluid rounded mb-2" style="max-width: 150px;">
+
+                  </div>
+                  <div class="col-md-8">
+                    <table class="table table-striped">
+                      <tr>
+                        <th>Name</th>
+                        <td><%= user.name %></td>
+                      </tr>
+                      <tr>
+                        <th>Email</th>
+                        <td><%= user.email || 'N/A' %></td>
+                      </tr>
+                      <tr>
+                        <th>Mobile</th>
+                        <td><%= user.mobile %></td>
+                      </tr>
+                      <tr>
+                        <th>Gender</th>
+                        <td><%= user.gender || 'N/A' %></td>
+                      </tr>
+                      <tr>
+                        <th>DOB</th>
+                        <td><%= user.dob ? user.dob.toDateString() : 'N/A' %></td>
+                      </tr>
+                      <tr>
+                        <th>User Type</th>
+                        <td><%= user.user_type %></td>
+                      </tr>
+                      <tr>
+                        <th>OTP Verified</th>
+                        <td>
+                          <% if (user.otp_verify) { %>
+                          <span class="badge bg-success">Verified</span>
+                          <% } else { %>
+                          <span class="badge bg-danger">Not Verified</span>
+                          <% } %>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Terms Accepted</th>
+                        <td>
+                          <% if (user.terms_conditions) { %>
+                          <span class="badge bg-success">Accepted</span>
+                          <% } else { %>
+                          <span class="badge bg-warning">Not Accepted</span>
+                          <% } %>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Address</th>
+                        <td><%= user.homeAddress || 'N/A' %></td>
+                      </tr>
+                      <tr>
+                        <th>Emergency Contact</th>
+                        <td><%= user.emergencyContact || 'N/A' %></td>
+                      </tr>
+                      <tr>
+                        <th>SSN</th>
+                        <td><%= user.ssn || 'N/A' %></td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bookings Tab -->
+              <div class="tab-pane" id="bookings-just" role="tabpanel" aria-labelledby="bookings-tab-justified">
+                <% if (bookings.length === 0) { %>
+                <p>No bookings found.</p>
+                <% } else { %>
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Booking ID</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% bookings.forEach((b, i) => { %>
+                    <tr>
+                      <td><%= i+1 %></td>
+                      <td><%= b._id %></td>
+                      <td><%= b.date.toDateString() %></td>
+                      <td><%= b.status %></td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+                <% } %>
+              </div>
+
+              <div class="tab-pane" id="wallet_transaction-just" role="tabpanel" aria-labelledby="wallet_transaction-tab-justified">
+                
+                <div class="table-responsive card card-company-table">
+                  <table class="table" id="transactionsTable">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>User</th>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Reason</th>
+                        <th>Description</th>
+                        <th>Balance After</th>
+                        <th>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+  const user = <%- JSON.stringify(user) %>; 
+</script>
+
+<script>
+  $(document).ready(function() {
+    var table = $('#transactionsTable').DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: '/admin/transactions/data',
+        type: 'POST',
+        contentType: 'application/json',
+        data: function(d) {
+           d.userId = user._id;  // user injected from EJS
+          return JSON.stringify(d);
+        }
+      },
+      columns: [{
+          data: null,
+          render: function(data, type, row, meta) {
+            return meta.settings._iDisplayStart + meta.row + 1;
+          },
+          searchable: false
+        },
+        {
+          data: 'user',
+          defaultContent: '-'
+        }, // populated with populate('userId')
+        {
+          data: 'amount'
+        },
+        {
+          data: 'type',
+          render: data => data === 'credit' ?
+            '<span class="badge bg-success">Credit</span>' : '<span class="badge bg-danger">Debit</span>'
+        },
+        {
+          data: 'reason'
+        },
+        {
+          data: 'description'
+        },
+        {
+          data: 'balance_after'
+        },
+        {
+          data: 'createdAt',
+          render: d => new Date(d).toLocaleString()
+        }
+
+      ],
+      drawCallback: function(settings) {
+        feather.replace();
+      }
+    });
+
+  });
+</script>
