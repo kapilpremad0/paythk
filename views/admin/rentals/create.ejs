@@ -111,15 +111,15 @@
                   <h4>Availability (Monday - Sunday)</h4>
                 </div>
 
-                <table class="table table-bordered" id="availability-table">
+                <table class="table table-bordered mb-2" id="availability-table">
                   <thead>
                     <tr>
                       <th>Day</th>
                       <th>Status</th>
-                      <th>Open Time</th>
-                      <th>Close Time</th>
-                      <th>Price</th>
-                      <th>Late Fees</th>
+                      <!-- <th>Open Time</th> -->
+                      <!-- <th>Close Time</th> -->
+                      <!-- <th>Price</th> -->
+                      <!-- <th>Late Fees</th> -->
                     </tr>
                   </thead>
                   <tbody>
@@ -136,22 +136,108 @@
                           <input type="checkbox" name="availability[<%= i %>][status]" class="form-check-input" value="active" <%= av && av.status === 'active' ? 'checked' : '' %>>
                         </div>
                       </td>
-                      <td>
+                      <!-- <td>
                         <input type="time" class="form-control" name="availability[<%= i %>][open_time]" value="<%= av ? av.open_time : '' %>" />
                       </td>
                       <td>
                         <input type="time" class="form-control" name="availability[<%= i %>][close_time]" value="<%= av ? av.close_time : '' %>" />
-                      </td>
-                      <td>
+                      </td> -->
+                      <!-- <td>
                         <input type="number" class="form-control" name="availability[<%= i %>][price]" value="<%= av ? av.price : '' %>" />
                       </td>
                       <td>
                         <input type="number" class="form-control" name="availability[<%= i %>][late_fees]" value="<%= av ? av.late_fees : '' %>" />
-                      </td>
+                      </td> -->
                     </tr>
                     <% }) %>
                   </tbody>
                 </table>
+
+
+
+                <div class="mb-2">
+                  <div class="mb-2">
+                    <h4>Vehicle Details</h4>
+                  </div>
+
+                  <div id="vehicle-wrapper">
+                    <% if (rental && rental.vehicles && rental.vehicles.length > 0) { %>
+                    <% rental.vehicles.forEach((v, i) => { %>
+                    <div class="card mb-2 p-2 vehicle-item">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <label>Bike Name</label>
+                          <input type="text" name="vehicles[<%= i %>][bikeName]" class="form-control" value="<%= v.bikeName %>">
+                        </div>
+                        <div class="col-md-2">
+                          <label>Price</label>
+                          <input type="number" name="vehicles[<%= i %>][price]" class="form-control" value="<%= v.price %>">
+                        </div>
+                        <div class="col-md-2">
+                          <label>Helmet</label><br>
+                          <input type="checkbox" name="vehicles[<%= i %>][helmet]" value="true" <%= v.helmet ? 'checked' : '' %>>
+                        </div>
+                        <div class="col-md-2">
+                          <label>Max Speed</label>
+                          <input type="number" name="vehicles[<%= i %>][maxSpeed]" class="form-control" value="<%= v.maxSpeed %>">
+                        </div>
+                        <div class="col-md-2">
+                          <label>Person</label>
+                          <input type="number" name="vehicles[<%= i %>][person]" class="form-control" value="<%= v.person %>">
+                        </div>
+                        <div class="col-md-12 mt-1">
+                          <label>Images</label>
+                          <input type="file" name="vehicles[<%= i %>][images]" class="form-control" multiple>
+                          <% if (v.images && v.images.length > 0) { %>
+                          <% v.images.forEach(img => { %>
+                          <img src="<%= img %>" width="60" class="mt-1 rounded">
+                          <% }) %>
+                          <% } %>
+                        </div>
+                      </div>
+                    </div>
+                    <% }) %>
+                    <% } else { %>
+                    <!-- Empty state for new rental -->
+                    <div class="card mb-2 p-2 vehicle-item">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <label>Bike Name</label>
+                          <input type="text" name="vehicles[0][bikeName]" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                          <label>Price</label>
+                          <input type="number" name="vehicles[0][price]" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                          <label>Helmet</label><br>
+                          <input type="checkbox" name="vehicles[0][helmet]" value="true">
+                        </div>
+                        <div class="col-md-2">
+                          <label>Max Speed</label>
+                          <input type="number" name="vehicles[0][maxSpeed]" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                          <label>Person</label>
+                          <input type="number" name="vehicles[0][person]" class="form-control">
+                        </div>
+                        <div class="col-md-12 mt-1">
+                          <label>Images</label>
+                          <input type="file" name="vehicles[0][images]" class="form-control" multiple>
+                        </div>
+                      </div>
+                    </div>
+                    <% } %>
+                  </div>
+
+                </div>
+
+                <div class="mb-2">
+                  <button type="button" class="btn btn-outline-primary" id="addVehicleBtn">+ Add Vehicle</button>
+
+                </div>
+
+                <!-- Add vehicle button -->
 
 
 
@@ -227,5 +313,44 @@
         }
       });
     });
+  });
+</script>
+
+<script>
+  let vehicleIndex = <%= rental && rental.vehicles ? rental.vehicles.length : 1 %>;
+
+  $('#addVehicleBtn').on('click', function() {
+    let html = `
+    <div class="card mb-2 p-2 vehicle-item">
+      <div class="row">
+        <div class="col-md-4">
+          <label>Bike Name</label>
+          <input type="text" name="vehicles[${vehicleIndex}][bikeName]" class="form-control">
+        </div>
+        <div class="col-md-2">
+          <label>Price</label>
+          <input type="number" name="vehicles[${vehicleIndex}][price]" class="form-control">
+        </div>
+        <div class="col-md-2">
+          <label>Helmet</label><br>
+          <input type="checkbox" name="vehicles[${vehicleIndex}][helmet]" value="true">
+        </div>
+        <div class="col-md-2">
+          <label>Max Speed</label>
+          <input type="number" name="vehicles[${vehicleIndex}][maxSpeed]" class="form-control">
+        </div>
+        <div class="col-md-2">
+          <label>Person</label>
+          <input type="number" name="vehicles[${vehicleIndex}][person]" class="form-control">
+        </div>
+        <div class="col-md-12 mt-1">
+          <label>Images</label>
+          <input type="file" name="vehicles[${vehicleIndex}][images]" class="form-control" multiple>
+        </div>
+      </div>
+    </div>
+    `;
+    $('#vehicle-wrapper').append(html);
+    vehicleIndex++;
   });
 </script>

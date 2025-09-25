@@ -1,5 +1,15 @@
 const mongoose = require("mongoose");
 
+const vehicleSchema = new mongoose.Schema({
+  bikeName: { type: String, required: true },
+  price: { type: Number, required: true },
+  helmet: { type: Boolean, default: false },
+  maxSpeed: { type: Number },
+  person: { type: Number },
+  images: [String] // store file paths or URLs
+});
+
+
 const rentalSchema = new mongoose.Schema({
   name: { type: String, required: true },        // Rental name
   location: {
@@ -16,6 +26,7 @@ const rentalSchema = new mongoose.Schema({
   contactNumber: { type: String },
   email: { type: String },
   website: { type: String },
+  vehicles: [vehicleSchema], // <-- new field
   partner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",   // <-- Name of your Location model

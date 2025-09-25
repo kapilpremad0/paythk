@@ -142,7 +142,7 @@ exports.storeData = async (req, res) => {
       contactPerson,
       contactNumber,
       email,
-      website ,partner
+      website ,partner ,vehicles
 
       = [] } = req.body;
 
@@ -164,7 +164,7 @@ exports.storeData = async (req, res) => {
       name, location, address, terms, description, images, contactPerson,
       contactNumber,
       email,
-      website ,partner
+      website ,partner ,vehicles
     });
 
     // 2️⃣ Create Availability (if provided)
@@ -205,6 +205,7 @@ exports.updateData = async (req, res) => {
       contactNumber,
       email,
       partner,
+      vehicles,
       website = [] } = req.body;
 
     // Basic validation
@@ -231,6 +232,7 @@ exports.updateData = async (req, res) => {
     rental.terms = terms;
     rental.description = description;
     rental.partner = partner;
+    rental.vehicles = vehicles;
 
     await rental.save();
 
