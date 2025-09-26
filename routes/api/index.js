@@ -12,6 +12,7 @@ router.use('/cafes', require('../api/cafe'));
 router.use('/guides', require('../api/guide'));
 router.use('/itineraries',verifyToken, require('../api/itinerary'));
 router.use('/find_buddies', verifyToken, require('../api/buddie'));
+router.use('/bookings', verifyToken, require('../api/booking'));
 
 
 
