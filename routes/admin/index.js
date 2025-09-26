@@ -15,5 +15,6 @@ router.use('/transactions', require('./transactionRoutes.js'));
 router.use('/plans', require('./planRoutes.js'));
 router.use('/coupons', require('./couponRoutes.js'));
 router.use('/itineraries', require('./itinearyRoutes.js'));
+router.use('/bookings', require('./bookingRoutes.js'));
 
 module.exports = router;

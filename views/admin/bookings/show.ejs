@@ -1,0 +1,131 @@
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-body">
+
+      <div class="col-xl-12 col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            <h2>Booking Detail</h2>
+          </div>
+          <div class="card-body">
+
+            <!-- Basic Booking Info -->
+
+            <div class="mb-2">
+              <h4>Booking Info</h4>
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <th>Booking Type</th>
+                    <td><%= booking.bookingType %></td>
+                  </tr>
+                  <tr>
+                    <th>Status</th>
+                    <td>
+                      <span class="badge bg-<%= booking.status === 'pending' ? 'warning' : booking.status === 'cancelled' ? 'danger' : 'success' %>">
+                        <%= booking.status || 'N/A' %>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Price</th>
+                    <td>₹<%= booking.price %></td>
+                  </tr>
+                  <tr>
+                    <th>Discount</th>
+                    <td>₹<%= booking.discount || 0 %></td>
+                  </tr>
+                  <tr>
+                    <th>Total Amount</th>
+                    <td>₹<%= booking.total_amount %></td>
+                  </tr>
+                  <tr>
+                    <th>Coupon Code</th>
+                    <td><%= booking.coupon_code || '-' %></td>
+                  </tr>
+                  <tr>
+                    <th>Created At</th>
+                    <td><%= new Date(booking.createdAt).toLocaleString() %></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- User Info -->
+            <% if (booking.user) { %>
+            <div class="mb-2">
+
+
+              <h4>User Info</h4>
+              <table class="table table-bordered">
+                <tbody>
+                  <% for (let key in booking.user) { %>
+                  <tr>
+                    <th><%= key.charAt(0).toUpperCase() + key.slice(1) %></th>
+                    <td><%= booking.user[key] %></td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+            <% } %>
+
+            <!-- Partner Info -->
+            <% if (booking.partner) { %>
+            <div class="mb-2">
+              <h4>Partner Info</h4>
+              <table class="table table-bordered">
+                <tbody>
+                  <% for (let key in booking.partner) { %>
+                  <tr>
+                    <th><%= key.charAt(0).toUpperCase() + key.slice(1) %></th>
+                    <td><%= booking.partner[key] %></td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+            <% } %>
+
+            <!-- Dynamic Details Section -->
+            <% if (booking.details) { %>
+            <% for (let detailKey in booking.details) { %>
+            <div class="mb-2">
+              <h4><%= detailKey.charAt(0).toUpperCase() + detailKey.slice(1) %> Info</h4>
+              <table class="table table-bordered">
+                <tbody>
+                  <% let detailObj = booking.details[detailKey]; %>
+                  <% for (let key in detailObj) { %>
+                  <tr>
+                    <th><%= key.charAt(0).toUpperCase() + key.slice(1) %></th>
+                    <td>
+                      <% let value = detailObj[key]; %>
+                      <% if (Array.isArray(value)) { %>
+                      <%= value.join(', ') %>
+                      <% } else if (typeof value === 'object' && value !== null) { %>
+                      <ul>
+                        <% for (let k in value) { %>
+                        <li><strong><%= k %>:</strong> <%= value[k] %></li>
+                        <% } %>
+                      </ul>
+                      <% } else { %>
+                      <%= value %>
+                      <% } %>
+                    </td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+            <% } %>
+            <% } %>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

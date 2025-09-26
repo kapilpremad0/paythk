@@ -1,0 +1,104 @@
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper container-xxl p-0">
+    <div class="content-body">
+      <div class="row" id="table-bordered">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h4 class="card-title">Bookings</h4>
+            </div>
+
+            <div class="card-body">
+              <div class="table-responsive card card-company-table">
+                <table class="table" id="bookingTable">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>User</th>
+                      <th>Vehicle</th>
+                      <th>Booking Type</th>
+                      <th>Price</th>
+                      <th>Discount</th>
+                      <th>Total Amount</th>
+                      <th>Status</th>
+                      <th>Created At</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    var table = $('#bookingTable').DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: '/admin/bookings/data', 
+        type: 'POST',
+        contentType: 'application/json',
+        data: function(d) {
+          return JSON.stringify(d);
+        }
+      },
+
+      columns: [
+        {
+          data: null,
+          render: function(data, type, row, meta) {
+            return meta.settings._iDisplayStart + meta.row + 1;
+          },
+          searchable: false
+        },
+        { data: 'user', defaultContent: '-' }, // populated from user
+        { data: 'vehicle', defaultContent: '-' }, // from details.vehicle
+        { data: 'bookingType', defaultContent: '-' },
+        { 
+          data: 'price',
+          render: p => p ? `₹${p}` : '-' 
+        },
+        { 
+          data: 'discount',
+          render: d => d ? `₹${d}` : '₹0'
+        },
+        { 
+          data: 'total_amount',
+          render: t => t ? `₹${t}` : '-' 
+        },
+        { 
+          data: 'status',
+          render: s => `<span class="badge bg-${
+            s === 'pending' ? 'warning' : 
+            s === 'cancelled' ? 'danger' : 'success'
+          }">${s}</span>`
+        },
+        { 
+          data: 'createdAt',
+          render: d => new Date(d).toLocaleString()
+        },
+        { 
+          data: '_id',
+          render: function(data) {
+            return `<a href="/admin/bookings/${data}" class="btn btn-sm btn-primary">View</a>`;
+          },
+          orderable: false,
+          searchable: false
+        }
+      ],
+      drawCallback: function(settings) {
+        feather.replace();
+      }
+    });
+  });
+</script>

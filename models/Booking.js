@@ -27,7 +27,12 @@ const bookingSchema = new mongoose.Schema({
     discount: { type: Number, default: 0 },         // discount amount
     coupon_code: { type: String },                  // applied coupon
     total_amount: { type: Number, required: true }, // final amount after discount
-    details: { type: mongoose.Schema.Types.Mixed }
+    details: { type: mongoose.Schema.Types.Mixed },
+    status: {
+        type: String,
+        enum: ["pending", "confirmed", "ongoing", "completed", "cancelled"],
+        default: "pending"
+    }, // ✅ Added status
 }, { timestamps: true });
 
 module.exports = mongoose.model("Booking", bookingSchema);
